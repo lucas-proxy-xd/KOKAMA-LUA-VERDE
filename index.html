@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kokama – Rede de Saberes 2026</title>
+<style>
+:root{
+  --verde-escuro:#1a3a1a;
+  --verde-medio:#2d6a2d;
+  --verde-claro:#4a9a4a;
+  --verde-folha:#6dbf6d;
+  --amarelo:#f5c518;
+  --amarelo-claro:#fff3a0;
+  --terra:#8b5e3c;
+  --bege:#f5ecd7;
+  --branco:#fafff5;
+  --texto:#1a2e1a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--verde-escuro);color:var(--branco);overflow-x:hidden;}
+
+/* ── MÚSICA ── */
+#music-bar{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(10,30,10,.92);backdrop-filter:blur(8px);display:flex;align-items:center;gap:12px;padding:8px 20px;border-bottom:1px solid var(--verde-claro);}
+#music-bar span{font-size:13px;color:var(--verde-folha);flex:1;}
+#btn-music{background:var(--verde-medio);border:none;color:#fff;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;transition:.2s;}
+#btn-music:hover{background:var(--verde-claro);}
+#audio-el{display:none;}
+
+/* ── CANVAS FLORESTA ── */
+#forest-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+/* ── HERO ── */
+#hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;}
+.hero-logo{width:120px;height:120px;margin-bottom:24px;filter:drop-shadow(0 0 20px rgba(109,191,109,.5));}
+#hero h1{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.04em;text-shadow:0 2px 20px rgba(0,0,0,.6);line-height:1.1;}
+#hero h1 span{color:var(--amarelo);}
+#hero p{margin-top:12px;font-size:1.1rem;color:var(--verde-folha);max-width:520px;}
+.scroll-hint{margin-top:40px;animation:bounce 2s infinite;font-size:13px;color:rgba(255,255,255,.5);}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ── SEÇÕES ── */
+section{position:relative;z-index:1;padding:60px 20px;}
+.section-title{text-align:center;font-size:1.8rem;font-weight:700;color:var(--amarelo);margin-bottom:8px;text-shadow:0 1px 10px rgba(0,0,0,.4);}
+.section-sub{text-align:center;font-size:.95rem;color:var(--verde-folha);margin-bottom:36px;}
+
+/* ── SEMANA ATUAL ── */
+#semana{background:rgba(0,0,0,.3);backdrop-filter:blur(6px);}
+.semana-cards{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:1000px;margin:0 auto;}
+.aula-card{background:rgba(45,106,45,.35);border:1px solid var(--verde-claro);border-radius:16px;padding:20px 24px;min-width:180px;flex:1;max-width:220px;transition:.3s;cursor:default;}
+.aula-card:hover{transform:translateY(-4px);background:rgba(45,106,45,.6);}
+.aula-card.hoje{border-color:var(--amarelo);background:rgba(245,197,24,.15);box-shadow:0 0 20px rgba(245,197,24,.3);}
+.aula-card.hoje .card-dia{color:var(--amarelo);}
+.aula-card.remanejada{border-color:#ff9900;background:rgba(255,153,0,.1);}
+.card-dia{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--verde-folha);margin-bottom:4px;}
+.card-data{font-size:1.6rem;font-weight:800;line-height:1;}
+.card-materia{font-size:.85rem;margin-top:8px;color:#cce8cc;}
+.card-hora{font-size:.8rem;color:var(--verde-folha);margin-top:4px;}
+.card-badge{display:inline-block;font-size:.7rem;margin-top:8px;padding:2px 8px;border-radius:10px;background:rgba(255,153,0,.3);color:#ffcc66;}
+
+/* ── CALENDÁRIO ── */
+#calendario{background:rgba(0,0,0,.2);}
+.cal-nav{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:24px;}
+.cal-nav button{background:var(--verde-medio);border:none;color:#fff;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:1rem;transition:.2s;}
+.cal-nav button:hover{background:var(--verde-claro);}
+.cal-nav h2{font-size:1.4rem;min-width:180px;text-align:center;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:840px;margin:0 auto;}
+.cal-header{text-align:center;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--verde-folha);padding:6px 0;}
+.cal-day{background:rgba(45,106,45,.2);border:1px solid rgba(109,191,109,.2);border-radius:10px;padding:8px 6px;min-height:70px;cursor:pointer;transition:.2s;position:relative;}
+.cal-day:hover{background:rgba(45,106,45,.5);border-color:var(--verde-claro);}
+.cal-day.vazio{background:transparent;border-color:transparent;cursor:default;}
+.cal-day.hoje-cal{border-color:var(--amarelo);background:rgba(245,197,24,.15);}
+.cal-day.remanejado{border-color:#ff9900;}
+.cal-day .d-num{font-size:.85rem;font-weight:700;}
+.cal-day.remanejado .d-num{color:var(--amarelo);}
+.cal-day .d-aula{font-size:.62rem;color:#aaddaa;margin-top:3px;line-height:1.3;}
+.cal-day .d-badge{font-size:.55rem;padding:1px 5px;border-radius:6px;display:inline-block;margin-top:3px;}
+.d-badge.rem{background:rgba(255,153,0,.4);color:#ffcc44;}
+.legenda{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:20px;font-size:.8rem;}
+.leg-item{display:flex;align-items:center;gap:6px;}
+.leg-cor{width:14px;height:14px;border-radius:3px;}
+
+/* ── MURAL ── */
+#mural{background:rgba(0,0,0,.3);}
+.mural-scroll{display:flex;gap:20px;overflow-x:auto;padding:12px 4px 20px;scrollbar-width:thin;scrollbar-color:var(--verde-claro) transparent;}
+.mural-card{position:relative;min-width:280px;height:200px;border-radius:16px;overflow:hidden;flex-shrink:0;cursor:pointer;}
+.mural-card img{width:100%;height:100%;object-fit:cover;transition:.4s;}
+.mural-card:hover img{transform:scale(1.07);}
+.mural-legenda{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:30px 14px 12px;font-size:.85rem;line-height:1.4;}
+.mural-legenda strong{display:block;font-size:.95rem;}
+.mural-empty{text-align:center;padding:40px;color:var(--verde-folha);font-style:italic;}
+
+/* ── ADMIN ── */
+#admin-fab{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--verde-medio);border:none;color:#fff;width:52px;height:52px;border-radius:50%;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:.2s;}
+#admin-fab:hover{background:var(--verde-claro);transform:scale(1.1);}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.modal-overlay.ativo{display:flex;}
+.modal-box{background:#0f2a0f;border:1px solid var(--verde-claro);border-radius:20px;padding:36px 32px;width:min(480px,95vw);max-height:90vh;overflow-y:auto;}
+.modal-box h3{font-size:1.3rem;color:var(--amarelo);margin-bottom:20px;}
+.form-row{margin-bottom:14px;}
+.form-row label{display:block;font-size:.8rem;color:var(--verde-folha);margin-bottom:4px;}
+.form-row input,.form-row select,.form-row textarea{width:100%;background:rgba(255,255,255,.08);border:1px solid var(--verde-claro);border-radius:8px;padding:9px 12px;color:#fff;font-size:.9rem;outline:none;}
+.form-row textarea{min-height:80px;resize:vertical;}
+.btn-primary{background:var(--verde-medio);border:none;color:#fff;padding:10px 24px;border-radius:12px;cursor:pointer;font-size:.95rem;transition:.2s;width:100%;margin-top:8px;}
+.btn-primary:hover{background:var(--verde-claro);}
+.btn-secondary{background:transparent;border:1px solid var(--verde-claro);color:var(--verde-folha);padding:8px 20px;border-radius:12px;cursor:pointer;font-size:.9rem;margin-top:8px;width:100%;}
+.modal-close{float:right;background:none;border:none;color:#aaa;font-size:1.4rem;cursor:pointer;line-height:1;}
+.status-msg{margin-top:10px;font-size:.85rem;text-align:center;min-height:20px;}
+.status-msg.ok{color:var(--verde-folha);}
+.status-msg.err{color:#ff7777;}
+#admin-painel{display:none;}
+#admin-painel.ativo{display:block;}
+.admin-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{background:rgba(255,255,255,.08);border:1px solid var(--verde-claro);color:#ccc;padding:7px 16px;border-radius:10px;cursor:pointer;font-size:.85rem;}
+.tab-btn.ativo{background:var(--verde-medio);color:#fff;}
+.tab-content{display:none;}
+.tab-content.ativo{display:block;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;text-align:center;padding:30px 20px;color:rgba(255,255,255,.4);font-size:.8rem;border-top:1px solid rgba(109,191,109,.15);}
+
+/* ── ANIMAÇÃO PÁSSARO CLIQUE ── */
+.click-burst{position:fixed;pointer-events:none;z-index:9999;font-size:1.6rem;animation:burst .8s ease-out forwards;}
+@keyframes burst{0%{opacity:1;transform:scale(.5) translateY(0)}100%{opacity:0;transform:scale(1.5) translateY(-40px)}}
+
+/* scrollbar */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--verde-medio);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- MÚSICA -->
+<div id="music-bar">
+  <span>🎵 Kokama – Sons da Floresta</span>
+  <button id="btn-music" onclick="toggleMusic()">▶ Tocar música</button>
+  <audio id="audio-el" loop src="musica1.mp3"></audio>
+</div>
+
+<!-- CANVAS ANIMAÇÕES -->
+<canvas id="forest-canvas"></canvas>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Logo SVG Kokama -->
+  <svg class="hero-logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="60" cy="60" r="58" fill="none" stroke="#4a9a4a" stroke-width="2"/>
+    <ellipse cx="60" cy="75" rx="30" ry="22" fill="#2d6a2d"/>
+    <ellipse cx="60" cy="68" rx="22" ry="18" fill="#3d8a3d"/>
+    <line x1="60" y1="46" x2="60" y2="20" stroke="#4a9a4a" stroke-width="2.5"/>
+    <ellipse cx="60" cy="16" rx="14" ry="10" fill="#4a9a4a"/>
+    <ellipse cx="42" cy="30" rx="10" ry="7" fill="#4a9a4a" transform="rotate(-30 42 30)"/>
+    <ellipse cx="78" cy="30" rx="10" ry="7" fill="#4a9a4a" transform="rotate(30 78 30)"/>
+    <circle cx="60" cy="62" r="5" fill="#f5c518"/>
+  </svg>
+  <h1>Projeto<br><span>Rede de Saberes</span><br>2026</h1>
+  <p>Abril a Novembro · Cultura Kokama · Saberes da Floresta</p>
+  <div class="scroll-hint">↓ role para ver as aulas</div>
+</section>
+
+<!-- AULAS DA SEMANA -->
+<section id="semana">
+  <div class="section-title">📅 Aulas desta semana</div>
+  <div class="section-sub" id="semana-sub">Carregando...</div>
+  <div class="semana-cards" id="semana-cards"></div>
+</section>
+
+<!-- CALENDÁRIO -->
+<section id="calendario">
+  <div class="section-title">🗓 Calendário completo</div>
+  <div class="section-sub">Clique em um dia para ver detalhes</div>
+  <div class="cal-nav">
+    <button onclick="mudarMes(-1)">◀</button>
+    <h2 id="cal-titulo"></h2>
+    <button onclick="mudarMes(1)">▶</button>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div class="legenda">
+    <div class="leg-item"><div class="leg-cor" style="background:var(--amarelo);"></div> Remanejada p/ sábado</div>
+    <div class="leg-item"><div class="leg-cor" style="background:rgba(245,197,24,.3);border:1px solid var(--amarelo)"></div> Hoje</div>
+    <div class="leg-item"><div class="leg-cor" style="background:rgba(45,106,45,.5);border:1px solid var(--verde-claro)"></div> Aula normal</div>
+  </div>
+</section>
+
+<!-- MURAL -->
+<section id="mural">
+  <div class="section-title">📸 Mural</div>
+  <div class="section-sub">Novidades e registros do projeto</div>
+  <div class="mural-scroll" id="mural-scroll">
+    <div class="mural-empty">Nenhuma publicação ainda. O administrador pode adicionar fotos no painel.</div>
+  </div>
+</section>
+
+<footer>
+  Projeto Rede de Saberes 2026 · Cultura Kokama · Preservação & Educação
+</footer>
+
+<!-- FAB ADMIN -->
+<button id="admin-fab" title="Administrador" onclick="abrirModalLogin()">⚙</button>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-login')">✕</button>
+    <h3>🌿 Acesso Administrador</h3>
+    <div class="form-row">
+      <label>Senha</label>
+      <input type="password" id="campo-senha" placeholder="Digite a senha" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <button class="btn-primary" onclick="fazerLogin()">Entrar</button>
+    <div class="status-msg" id="login-msg"></div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN PAINEL -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-admin')">✕</button>
+    <h3>🌿 Painel Administrador</h3>
+    <div id="admin-painel" class="ativo">
+      <div class="admin-tabs">
+        <button class="tab-btn ativo" onclick="abrirTab('tab-aula',this)">+ Aula Extra</button>
+        <button class="tab-btn" onclick="abrirTab('tab-mural',this)">+ Mural</button>
+        <button class="tab-btn" onclick="abrirTab('tab-info',this)">Informativo</button>
+      </div>
+
+      <!-- TAB AULA -->
+      <div class="tab-content ativo" id="tab-aula">
+        <div class="form-row"><label>Data (dd/mm/aaaa)</label><input type="text" id="a-data" placeholder="ex: 15/04/2026"></div>
+        <div class="form-row"><label>Matéria</label><input type="text" id="a-materia" placeholder="ex: Informática"></div>
+        <div class="form-row"><label>Horário início</label><input type="time" id="a-inicio"></div>
+        <div class="form-row"><label>Horário fim</label><input type="time" id="a-fim"></div>
+        <div class="form-row"><label>Professor</label><input type="text" id="a-prof" placeholder="ex: Professora Ana"></div>
+        <div class="form-row"><label>Observação</label><input type="text" id="a-obs" placeholder="opcional"></div>
+        <button class="btn-primary" onclick="salvarAulaExtra()">Salvar aula extra</button>
+        <div class="status-msg" id="msg-aula"></div>
+        <hr style="border-color:rgba(255,255,255,.1);margin:16px 0;">
+        <div style="font-size:.8rem;color:var(--verde-folha);">Aulas extras salvas:</div>
+        <div id="lista-extras" style="margin-top:8px;font-size:.8rem;"></div>
+      </div>
+
+      <!-- TAB MURAL -->
+      <div class="tab-content" id="tab-mural">
+        <div class="form-row"><label>URL da imagem</label><input type="text" id="m-url" placeholder="https://..."></div>
+        <div class="form-row"><label>Título</label><input type="text" id="m-titulo" placeholder="Título da foto"></div>
+        <div class="form-row"><label>Legenda</label><textarea id="m-legenda" placeholder="Descrição..."></textarea></div>
+        <button class="btn-primary" onclick="salvarMural()">Publicar no mural</button>
+        <div class="status-msg" id="msg-mural"></div>
+        <hr style="border-color:rgba(255,255,255,.1);margin:16px 0;">
+        <div id="lista-mural-admin" style="font-size:.8rem;"></div>
+      </div>
+
+      <!-- TAB INFORMATIVO -->
+      <div class="tab-content" id="tab-info">
+        <div class="form-row"><label>Mensagem para alunos</label><textarea id="i-msg" placeholder="Ex: Aula do dia 10 cancelada..."></textarea></div>
+        <button class="btn-primary" onclick="salvarInformativo()">Publicar informativo</button>
+        <div class="status-msg" id="msg-info"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DIA DETALHE -->
+<div class="modal-overlay" id="modal-dia">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-dia')">✕</button>
+    <h3 id="dia-titulo">Aulas do dia</h3>
+    <div id="dia-conteudo" style="margin-top:16px;font-size:.9rem;line-height:1.8;"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIGURAÇÃO — troque pela URL do seu Apps Script
+// ══════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2QQCs141ukr8bcsDjshSnaHcG1LTHZfGA0K0NwE16bNu4E9NcIGPBCGQgf_gFtBxP/exec';
+
+// ══════════════════════════════════════════════
+// DADOS DO CALENDÁRIO (da planilha)
+// ══════════════════════════════════════════════
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+// Calendário base: { mes(0-index): { materia: [dias], ... } }
+const CAL = {
+  3: { // Abril
+    'Segunda – Informática': [6,13,20,27],
+    'Terça – Costura':       [7,14,21,28],
+    'Quarta – Música':       [1,8,15,22],
+    'Quinta – Culinária':    [9,23],
+    'Quinta – Artesanato':   [16,30],
+    'Sábado – Ajuri':        [4]
+  },
+  4: { // Maio
+    'Segunda – Informática': [4,11,18,25],
+    'Terça – Costura':       [5,12,19,26],
+    'Quarta – Música':       [6,13,20,27],
+    'Quinta – Culinária':    [7,21],
+    'Quinta – Artesanato':   [14,28],
+    'Sábado – Ajuri':        [2]
+  },
+  5: { // Junho
+    'Segunda – Informática': [1,8,15,22],
+    'Terça – Costura':       [2,9,16,23],
+    'Quarta – Música':       [3,10,17,24],
+    'Quinta – Culinária':    [4,18],
+    'Quinta – Artesanato':   [11,25],
+    'Sábado – Ajuri':        [6]
+  },
+  6: { // Julho
+    'Segunda – Informática': [6,13,20,27],
+    'Terça – Costura':       [7,14,21,28],
+    'Quarta – Música':       [1,8,15,22],
+    'Quinta – Culinária':    [9,23],
+    'Quinta – Artesanato':   [16,30],
+    'Sábado – Ajuri':        [4]
+  },
+  7: { // Agosto
+    'Segunda – Informática': [3,10,17,24],
+    'Terça – Costura':       [4,11,18,25],
+    'Quarta – Música':       [5,12,19,26],
+    'Quinta – Culinária':    [6,20],
+    'Quinta – Artesanato':   [13,27],
+    'Sábado – Ajuri':        [1]
+  },
+  8: { // Setembro
+    'Segunda – Informática': [7,14,21,28],
+    'Terça – Costura':       [1,8,15,22],
+    'Quarta – Música':       [2,9,16,23],
+    'Quinta – Culinária':    [10,24],
+    'Quinta – Artesanato':   [3,17],
+    'Sábado – Ajuri':        [5]
+  },
+  9: { // Outubro
+    'Segunda – Informática': [5,12,19,26],
+    'Terça – Costura':       [6,13,20,27],
+    'Quarta – Música':       [7,14,21,28],
+    'Quinta – Culinária':    [8,22],
+    'Quinta – Artesanato':   [15,29],
+    'Sábado – Ajuri':        [3]
+  },
+  10: { // Novembro
+    'Segunda – Informática': [2,9,16,23],
+    'Terça – Costura':       [3,10,17,24],
+    'Quarta – Música':       [4,11,18,25],
+    'Quinta – Culinária':    [5,19],
+    'Quinta – Artesanato':   [12,26],
+    'Sábado – Ajuri':        [7]
+  }
+};
+
+// Datas remanejadas (dia/mes 0-index) → repostas
+const REMANEJADAS = {
+  '6/3':  {motivo:'Reposição – 11/04 (sáb)'},
+  '20/3': {motivo:'Reposição – 25/04 (sáb)'},
+  '4/4':  {motivo:'Reposição – 09/05 (sáb)'},
+  '18/4': {motivo:'Reposição – 23/05 (sáb)'},
+  '1/5':  {motivo:'Reposição – 06/06 (sáb)'},
+  '15/5': {motivo:'Reposição – 20/06 (sáb)'},
+  '13/6': {motivo:'Reposição – 18/07 (sáb, tarde)'},
+  '27/6': {motivo:'Reposição – 18/07 (sáb, tarde)'},
+  '10/7': {motivo:'Reposição – 15/08 (sáb)'},
+  '24/7': {motivo:'Reposição – 29/08 (sáb)'},
+  '21/8': {motivo:'Reposição – 26/09 (sáb)'},
+  '5/9':  {motivo:'Reposição – 10/10 (sáb)'},
+  '19/9': {motivo:'Reposição – 24/10 (sáb)'},
+  '2/10': {motivo:'Reposição – 07/11 (sáb)'},
+  '16/10':{motivo:'Reposição – 21/11 (sáb)'}
+};
+
+function isRemanejada(dia,mes){return !!REMANEJADAS[`${dia}/${mes}`];}
+
+function aulasDodia(dia,mes){
+  const m=CAL[mes];if(!m)return[];
+  const res=[];
+  for(const [mat,dias] of Object.entries(m)){
+    if(dias.includes(dia)) res.push(mat);
+  }
+  return res;
+}
+
+// ── Storage local para extras e mural ──
+function getLS(k){try{return JSON.parse(localStorage.getItem(k)||'[]');}catch{return[];}}
+function setLS(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+// ══════════════════════════════════════════════
+// SEMANA ATUAL
+// ══════════════════════════════════════════════
+function renderSemana(){
+  const hoje=new Date();
+  const diaSem=hoje.getDay(); // 0=dom
+  const lun=new Date(hoje);lun.setDate(hoje.getDate()-(diaSem===0?6:diaSem-1));
+  const cards=document.getElementById('semana-cards');
+  const sub=document.getElementById('semana-sub');
+  cards.innerHTML='';
+  const nomes=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+  let proxAula=null;
+  for(let i=0;i<7;i++){
+    const d=new Date(lun);d.setDate(lun.getDate()+i);
+    const dia=d.getDate(),mes=d.getMonth();
+    const aulas=aulasDodia(dia,mes);
+    if(!aulas.length)continue;
+    const ehHoje=(d.toDateString()===hoje.toDateString());
+    const rem=isRemanejada(dia,mes);
+    if(!ehHoje && d>hoje && !proxAula) proxAula=d;
+    const c=document.createElement('div');
+    c.className='aula-card'+(ehHoje?' hoje':'')+(rem?' remanejada':'');
+    c.innerHTML=`<div class="card-dia">${nomes[i]}</div>
+      <div class="card-data">${String(dia).padStart(2,'0')}/${String(mes+1).padStart(2,'0')}</div>
+      ${aulas.map(a=>`<div class="card-materia">📚 ${a.split('–')[1]?.trim()||a}</div>`).join('')}
+      <div class="card-hora">08h00 – 12h00</div>
+      ${rem?`<span class="card-badge">⚠ Remanejada</span>`:''}
+      ${ehHoje?`<span class="card-badge" style="background:rgba(245,197,24,.3);color:var(--amarelo)">● Hoje</span>`:''}`;
+    cards.appendChild(c);
+  }
+  if(!cards.children.length) cards.innerHTML='<div style="color:var(--verde-folha);text-align:center;padding:20px;">Sem aulas programadas esta semana.</div>';
+  sub.textContent=`Semana de ${lun.getDate()}/${lun.getMonth()+1} a ${new Date(lun.getTime()+6*86400000).getDate()}/${new Date(lun.getTime()+6*86400000).getMonth()+1}`;
+}
+
+// ══════════════════════════════════════════════
+// CALENDÁRIO MENSAL
+// ══════════════════════════════════════════════
+let mesAtual=new Date().getMonth(), anoAtual=new Date().getFullYear();
+function renderCal(){
+  const titulo=document.getElementById('cal-titulo');
+  const grid=document.getElementById('cal-grid');
+  titulo.textContent=`${MESES[mesAtual]} ${anoAtual}`;
+  grid.innerHTML='';
+  DIAS_SEMANA.forEach(d=>{const h=document.createElement('div');h.className='cal-header';h.textContent=d;grid.appendChild(h);});
+  const primeiroDia=new Date(anoAtual,mesAtual,1).getDay();
+  for(let i=0;i<primeiroDia;i++){const v=document.createElement('div');v.className='cal-day vazio';grid.appendChild(v);}
+  const totalDias=new Date(anoAtual,mesAtual+1,0).getDate();
+  const hoje=new Date();
+  for(let d=1;d<=totalDias;d++){
+    const aulas=aulasDodia(d,mesAtual);
+    const rem=isRemanejada(d,mesAtual);
+    const ehHoje=(d===hoje.getDate()&&mesAtual===hoje.getMonth()&&anoAtual===hoje.getFullYear());
+    const el=document.createElement('div');
+    el.className='cal-day'+(ehHoje?' hoje-cal':'')+(rem?' remanejado':'');
+    el.innerHTML=`<div class="d-num">${d}</div>`+
+      aulas.map(a=>`<div class="d-aula">${a.split('–')[1]?.trim()||a}</div>`).join('')+
+      (rem?`<span class="d-badge rem">Reman.</span>`:'');
+    el.onclick=()=>abrirDia(d,mesAtual,anoAtual);
+    grid.appendChild(el);
+  }
+}
+function mudarMes(d){mesAtual+=d;if(mesAtual>11){mesAtual=0;anoAtual++;}if(mesAtual<0){mesAtual=11;anoAtual--;}renderCal();}
+
+function abrirDia(dia,mes,ano){
+  const aulas=aulasDodia(dia,mes);
+  const rem=isRemanejada(dia,mes);
+  const extras=getLS('extras-aulas').filter(e=>{
+    const[d,m,a]=e.data.split('/').map(Number);
+    return d===dia&&m-1===mes&&a===ano;
+  });
+  document.getElementById('dia-titulo').textContent=`${String(dia).padStart(2,'0')} de ${MESES[mes]} de ${ano}`;
+  let html='';
+  if(!aulas.length&&!extras.length){html='<p style="color:var(--verde-folha)">Sem aulas programadas.</p>';}
+  aulas.forEach(a=>{
+    html+=`<div style="padding:10px;background:rgba(45,106,45,.3);border-radius:10px;margin-bottom:8px;">
+      📚 <strong>${a}</strong><br>
+      <span style="font-size:.8rem;color:#aaa">08h00 – 12h00</span>
+      ${rem?`<br><span style="color:var(--amarelo);font-size:.8rem;">⚠ ${REMANEJADAS[`${dia}/${mes}`]?.motivo||'Remanejada'}</span>`:''}
+    </div>`;
+  });
+  extras.forEach(e=>{
+    html+=`<div style="padding:10px;background:rgba(255,153,0,.15);border-radius:10px;margin-bottom:8px;border:1px solid #ff9900;">
+      ➕ <strong>${e.materia}</strong> (extra)<br>
+      <span style="font-size:.8rem;color:#aaa">${e.inicio} – ${e.fim} · ${e.prof}</span>
+      ${e.obs?`<br><span style="font-size:.8rem;">${e.obs}</span>`:''}
+    </div>`;
+  });
+  document.getElementById('dia-conteudo').innerHTML=html;
+  document.getElementById('modal-dia').classList.add('ativo');
+}
+
+// ══════════════════════════════════════════════
+// MURAL
+// ══════════════════════════════════════════════
+function renderMural(){
+  const scroll=document.getElementById('mural-scroll');
+  const fotos=getLS('mural-fotos');
+  if(!fotos.length){scroll.innerHTML='<div class="mural-empty">Nenhuma publicação ainda.</div>';return;}
+  scroll.innerHTML=fotos.map((f,i)=>`
+    <div class="mural-card">
+      <img src="${f.url}" alt="${f.titulo}" onerror="this.src='https://via.placeholder.com/280x200/2d6a2d/ffffff?text=Foto'">
+      <div class="mural-legenda"><strong>${f.titulo}</strong>${f.legenda}</div>
+    </div>`).join('');
+}
+
+function renderListaMuralAdmin(){
+  const fotos=getLS('mural-fotos');
+  const el=document.getElementById('lista-mural-admin');
+  if(!fotos.length){el.innerHTML='<span style="color:var(--verde-folha)">Nenhuma foto.</span>';return;}
+  el.innerHTML=fotos.map((f,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+    <span>${f.titulo}</span>
+    <button onclick="removerFoto(${i})" style="background:none;border:none;color:#ff7777;cursor:pointer;font-size:.9rem;">✕</button>
+  </div>`).join('');
+}
+
+function removerFoto(i){const f=getLS('mural-fotos');f.splice(i,1);setLS('mural-fotos',f);renderMural();renderListaMuralAdmin();}
+
+// ══════════════════════════════════════════════
+// ADMIN – LOGIN VIA APPS SCRIPT
+// ══════════════════════════════════════════════
+let adminLogado=false;
+
+async function fazerLogin(){
+  const senha=document.getElementById('campo-senha').value;
+  const msg=document.getElementById('login-msg');
+  msg.textContent='Verificando...';msg.className='status-msg';
+  // Se o Apps Script ainda não foi configurado, usa senha local temporária
+  if(APPS_SCRIPT_URL==='SEU_APPS_SCRIPT_URL_AQUI'){
+    // ATENÇÃO: remova isso após configurar o Apps Script
+    if(senha==='kokama2026'){
+      loginSucesso();
+    } else {
+      msg.textContent='Senha incorreta.';msg.className='status-msg err';
+    }
+    return;
+  }
+  try{
+    const r=await fetch(`${APPS_SCRIPT_URL}?action=login&senha=${encodeURIComponent(senha)}`);
+    const d=await r.json();
+    if(d.ok){loginSucesso();}
+    else{msg.textContent='Senha incorreta.';msg.className='status-msg err';}
+  }catch(e){
+    msg.textContent='Erro de conexão com o servidor.';msg.className='status-msg err';
+  }
+}
+
+function loginSucesso(){
+  adminLogado=true;
+  fecharModal('modal-login');
+  document.getElementById('modal-admin').classList.add('ativo');
+  renderListaExtras();
+  renderListaMuralAdmin();
+}
+
+// ══════════════════════════════════════════════
+// ADMIN – AULA EXTRA
+// ══════════════════════════════════════════════
+function salvarAulaExtra(){
+  const data=document.getElementById('a-data').value;
+  const materia=document.getElementById('a-materia').value;
+  const inicio=document.getElementById('a-inicio').value;
+  const fim=document.getElementById('a-fim').value;
+  const prof=document.getElementById('a-prof').value;
+  const obs=document.getElementById('a-obs').value;
+  const msg=document.getElementById('msg-aula');
+  if(!data||!materia){msg.textContent='Preencha data e matéria.';msg.className='status-msg err';return;}
+  const extras=getLS('extras-aulas');
+  extras.push({data,materia,inicio,fim,prof,obs,id:Date.now()});
+  setLS('extras-aulas',extras);
+  msg.textContent='Aula extra salva!';msg.className='status-msg ok';
+  ['a-data','a-materia','a-inicio','a-fim','a-prof','a-obs'].forEach(id=>document.getElementById(id).value='');
+  renderListaExtras();
+  renderSemana();
+}
+
+function renderListaExtras(){
+  const extras=getLS('extras-aulas');
+  const el=document.getElementById('lista-extras');
+  if(!extras.length){el.innerHTML='<span style="color:var(--verde-folha)">Nenhuma aula extra.</span>';return;}
+  el.innerHTML=extras.map((e,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+    <span>${e.data} · ${e.materia}</span>
+    <button onclick="removerExtra(${i})" style="background:none;border:none;color:#ff7777;cursor:pointer;">✕</button>
+  </div>`).join('');
+}
+
+function removerExtra(i){const e=getLS('extras-aulas');e.splice(i,1);setLS('extras-aulas',e);renderListaExtras();renderSemana();}
+
+// ══════════════════════════════════════════════
+// ADMIN – MURAL
+// ══════════════════════════════════════════════
+function salvarMural(){
+  const url=document.getElementById('m-url').value;
+  const titulo=document.getElementById('m-titulo').value;
+  const legenda=document.getElementById('m-legenda').value;
+  const msg=document.getElementById('msg-mural');
+  if(!url||!titulo){msg.textContent='URL e título são obrigatórios.';msg.className='status-msg err';return;}
+  const fotos=getLS('mural-fotos');
+  fotos.unshift({url,titulo,legenda,id:Date.now()});
+  setLS('mural-fotos',fotos);
+  msg.textContent='Publicado no mural!';msg.className='status-msg ok';
+  ['m-url','m-titulo','m-legenda'].forEach(id=>document.getElementById(id).value='');
+  renderMural();renderListaMuralAdmin();
+}
+
+// ══════════════════════════════════════════════
+// ADMIN – INFORMATIVO
+// ══════════════════════════════════════════════
+function salvarInformativo(){
+  const texto=document.getElementById('i-msg').value;
+  const msg=document.getElementById('msg-info');
+  if(!texto){msg.textContent='Digite uma mensagem.';msg.className='status-msg err';return;}
+  const infos=getLS('informativos');
+  infos.unshift({texto,data:new Date().toLocaleDateString('pt-BR'),id:Date.now()});
+  setLS('informativos',infos);
+  msg.textContent='Informativo publicado!';msg.className='status-msg ok';
+  document.getElementById('i-msg').value='';
+}
+
+// ══════════════════════════════════════════════
+// MODAIS
+// ══════════════════════════════════════════════
+function abrirModalLogin(){document.getElementById('modal-login').classList.add('ativo');}
+function fecharModal(id){document.getElementById(id).classList.remove('ativo');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('ativo');}));
+
+function abrirTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('ativo'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById(id).classList.add('ativo');
+  btn.classList.add('ativo');
+}
+
+// ══════════════════════════════════════════════
+// MÚSICA
+// ══════════════════════════════════════════════
+let tocando=false;
+function toggleMusic(){
+  const audio=document.getElementById('audio-el');
+  const btn=document.getElementById('btn-music');
+  if(tocando){audio.pause();btn.textContent='▶ Tocar música';tocando=false;}
+  else{audio.play().catch(()=>{});btn.textContent='⏹ Parar música';tocando=true;}
+}
+
+// ══════════════════════════════════════════════
+// ANIMAÇÕES – CANVAS FLORESTA
+// ══════════════════════════════════════════════
+const canvas=document.getElementById('forest-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,animais=[];
+
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+window.addEventListener('resize',()=>{resize();criarAnimais();});
+resize();
+
+// Pássaro simples
+class Passaro{
+  constructor(lado){
+    this.lado=lado;
+    this.reset(true);
+    this.y=Math.random()*H*0.6+80;
+    this.asa=0;this.asaDir=1;this.vel=0.8+Math.random()*1.2;
+    this.tamanho=10+Math.random()*14;
+    this.cor=`hsl(${100+Math.random()*60},${60+Math.random()*30}%,${50+Math.random()*20}%)`;
+    this.excitado=0;
+  }
+  reset(init){
+    if(this.lado==='esq'){this.x=init?Math.random()*W:-80;}
+    else{this.x=init?Math.random()*W:W+80;}
+    if(!init)this.y=Math.random()*H*0.6+80;
+  }
+  update(){
+    this.x+=this.lado==='esq'?this.vel:-this.vel;
+    this.asa+=0.15*(this.excitado?2:1);
+    if(this.asa>Math.PI)this.asaDir=-1;
+    if(this.asa<0)this.asaDir=1;
+    if(this.excitado>0){this.excitado--;this.y+=Math.sin(this.excitado*.3)*2;}
+    if(this.x>W+100||this.x<-100)this.reset(false);
+  }
+  draw(){
+    ctx.save();
+    if(this.lado==='dir'){ctx.scale(-1,1);ctx.translate(-W,0);}
+    const x=this.lado==='esq'?this.x:W-this.x;
+    const t=this.tamanho,w=Math.sin(this.asa)*t*.7;
+    ctx.strokeStyle=this.cor;ctx.lineWidth=2;ctx.lineCap='round';
+    // asa esq
+    ctx.beginPath();ctx.moveTo(x,this.y);ctx.quadraticCurveTo(x-t,this.y-w,x-t*2,this.y);ctx.stroke();
+    // asa dir
+    ctx.beginPath();ctx.moveTo(x,this.y);ctx.quadraticCurveTo(x+t,this.y-w,x+t*2,this.y);ctx.stroke();
+    // corpo
+    ctx.fillStyle=this.cor;ctx.beginPath();ctx.ellipse(x,this.y,t*.4,t*.25,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  excitar(){this.excitado=40;this.vel=2+Math.random()*2;setTimeout(()=>this.vel=0.8+Math.random()*1.2,1500);}
+}
+
+// Borboleta
+class Borboleta{
+  constructor(){
+    this.x=Math.random()*W;this.y=Math.random()*H*0.8+100;
+    this.vx=(Math.random()-.5)*.8;this.vy=(Math.random()-.5)*.6;
+    this.asa=Math.random()*Math.PI*2;this.t=0;
+    this.cor1=`hsl(${30+Math.random()*60},90%,60%)`;
+    this.cor2=`hsl(${60+Math.random()*60},80%,55%)`;
+    this.tam=8+Math.random()*10;
+  }
+  update(){
+    this.t+=.03;this.x+=this.vx+Math.sin(this.t)*.5;this.y+=this.vy+Math.cos(this.t*.7)*.4;
+    this.asa+=.12;
+    if(this.x<0)this.vx=Math.abs(this.vx);if(this.x>W)this.vx=-Math.abs(this.vx);
+    if(this.y<50)this.vy=Math.abs(this.vy);if(this.y>H)this.vy=-Math.abs(this.vy);
+  }
+  draw(){
+    const s=Math.sin(this.asa)*.8,t=this.tam;
+    ctx.save();ctx.translate(this.x,this.y);
+    ctx.fillStyle=this.cor1;ctx.beginPath();
+    ctx.ellipse(-t*s,0,t*Math.abs(s)+1,t*.8,-.3,0,Math.PI*2);ctx.fill();
+    ctx.ellipse(t*s,0,t*Math.abs(s)+1,t*.8,.3,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#333';ctx.beginPath();ctx.ellipse(0,0,2,t*.6,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+}
+
+// Folhas caindo
+class Folha{
+  constructor(){this.reset(true);}
+  reset(init){
+    this.x=Math.random()*W;
+    this.y=init?Math.random()*H:-20;
+    this.rot=Math.random()*Math.PI*2;this.rotVel=(Math.random()-.5)*.05;
+    this.vel=.5+Math.random();this.amp=20+Math.random()*30;this.fase=Math.random()*Math.PI*2;
+    this.tam=6+Math.random()*10;
+    this.cor=`hsl(${90+Math.random()*50},${50+Math.random()*30}%,${30+Math.random()*25}%)`;
+    this.t=0;
+  }
+  update(){
+    this.t+=.02;this.y+=this.vel;this.x+=Math.sin(this.t+this.fase)*1.2;this.rot+=this.rotVel;
+    if(this.y>H+20)this.reset(false);
+  }
+  draw(){
+    ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.rot);
+    ctx.fillStyle=this.cor;ctx.beginPath();
+    ctx.moveTo(0,-this.tam);ctx.quadraticCurveTo(this.tam*.8,0,0,this.tam);
+    ctx.quadraticCurveTo(-this.tam*.8,0,0,-this.tam);ctx.fill();
+    ctx.restore();
+  }
+}
+
+function criarAnimais(){
+  animais=[];
+  const np=Math.floor(W/200)+3;
+  for(let i=0;i<np;i++) animais.push(new Passaro(Math.random()<.5?'esq':'dir'));
+  for(let i=0;i<4;i++) animais.push(new Borboleta());
+  for(let i=0;i<12;i++) animais.push(new Folha());
+}
+criarAnimais();
+
+// Gradiente de fundo
+function drawBG(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(10,30,10,0)');g.addColorStop(.5,'rgba(10,30,10,0)');g.addColorStop(1,'rgba(10,30,10,0)');
+  ctx.clearRect(0,0,W,H);
+}
+
+function loop(){
+  drawBG();
+  animais.forEach(a=>{a.update();a.draw();});
+  requestAnimationFrame(loop);
+}
+loop();
+
+// Click – excitar pássaros próximos e criar burst
+document.addEventListener('click',e=>{
+  if(e.target.closest('.modal-overlay,.modal-box,#music-bar,#admin-fab,button,input,textarea,select'))return;
+  // burst visual
+  const emojis=['🐦','🌿','🍃','✨','🦋','🌸'];
+  for(let i=0;i<3;i++){
+    const el=document.createElement('div');el.className='click-burst';
+    el.style.left=(e.clientX+((Math.random()-.5)*40))+'px';
+    el.style.top=(e.clientY+((Math.random()-.5)*40))+'px';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),900);
+  }
+  // excitar pássaros próximos
+  animais.filter(a=>a instanceof Passaro).forEach(p=>{
+    const dx=p.x-e.clientX,dy=p.y-e.clientY;
+    if(Math.sqrt(dx*dx+dy*dy)<200)p.excitar();
+  });
+});
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+renderSemana();
+renderCal();
+renderMural();
+</script>
+</body>
+</html>
