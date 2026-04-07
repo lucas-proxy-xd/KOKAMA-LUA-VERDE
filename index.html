@@ -220,7 +220,7 @@
       flex: 1;
       max-width: 220px;
       transition: .3s;
-      cursor: default;
+      cursor: pointer;
     }
 
     .aula-card:hover {
@@ -373,8 +373,8 @@
 
     .cal-day.destino-rem {
       border-color: #00ffff;
-      box-shadow: inset 0 0 15px rgba(0, 255, 255, .1);
-      animation: glow-pulse-cyan 2s infinite ease-in-out;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7), inset 0 0 10px rgba(0, 255, 255, 0.4);
+      animation: glow-pulse-cyan 1.2s infinite ease-in-out;
     }
 
     .cal-day .d-num {
@@ -726,19 +726,61 @@
 
     @keyframes glow-pulse-cyan {
       0% {
-        box-shadow: 0 0 5px rgba(0, 255, 255, .2), inset 0 0 5px rgba(0, 255, 255, .1);
+        box-shadow: 0 0 10px rgba(0, 255, 255, .4), inset 0 0 5px rgba(0, 255, 255, .2);
         border-color: rgba(0, 255, 255, .5);
+        filter: brightness(1);
       }
 
       50% {
-        box-shadow: 0 0 20px rgba(0, 255, 255, .6), inset 0 0 10px rgba(0, 255, 255, .3);
+        box-shadow: 0 0 45px rgba(0, 255, 255, 1), inset 0 0 25px rgba(0, 255, 255, .8);
         border-color: #00ffff;
+        filter: brightness(1.8);
       }
 
       100% {
-        box-shadow: 0 0 5px rgba(0, 255, 255, .2), inset 0 0 5px rgba(0, 255, 255, .1);
+        box-shadow: 0 0 10px rgba(0, 255, 255, .4), inset 0 0 5px rgba(0, 255, 255, .2);
         border-color: rgba(0, 255, 255, .5);
+        filter: brightness(1);
       }
+    }
+
+    .admin-aula-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .admin-aula-item {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--verde-claro);
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .admin-aula-item:hover {
+      background: rgba(109, 191, 109, .15);
+      border-color: var(--amarelo);
+      transform: translateX(4px);
+    }
+
+    .admin-aula-item .item-data {
+      font-size: .75rem;
+      color: var(--amarelo);
+      font-weight: 700;
+    }
+
+    .admin-aula-item .item-materia {
+      font-size: .95rem;
+      font-weight: 600;
+      margin: 2px 0;
+    }
+
+    .admin-aula-item .item-hora {
+      font-size: .8rem;
+      color: var(--verde-folha);
     }
 
     /* scrollbar */
@@ -808,11 +850,11 @@
     <div class="cal-grid" id="cal-grid"></div>
     <div class="legenda">
       <div class="leg-item">
-        <div class="leg-cor" style="background:var(--amarelo);box-shadow:0 0 8px var(--amarelo)"></div> Aula saindo
-        (Reman.)
+        <div class="leg-cor" style="background:var(--amarelo);box-shadow:0 0 8px var(--amarelo)"></div> Aula que mudou
+        de dia
       </div>
       <div class="leg-item">
-        <div class="leg-cor" style="background:#00ffff;box-shadow:0 0 8px #00ffff"></div> Aula chegando (Repos.)
+        <div class="leg-cor" style="background:#00ffff;box-shadow:0 0 15px #00ffff"></div> Novo dia de aula (Reposição)
       </div>
       <div class="leg-item">
         <div class="leg-cor" style="background:rgba(245,197,24,.3);border:1px solid var(--amarelo)"></div> Hoje
@@ -862,14 +904,37 @@
       <h3>🌿 Painel Administrador</h3>
       <div id="admin-painel" class="ativo">
         <div class="admin-tabs">
-          <button class="tab-btn ativo" onclick="abrirTab('tab-aula',this)">+ Aula Extra</button>
+          <button class="tab-btn ativo" onclick="abrirTab('tab-semana-admin',this)">📅 Semana</button>
+          <button class="tab-btn" onclick="abrirTab('tab-aula',this)">+ Aula Extra</button>
           <button class="tab-btn" onclick="abrirTab('tab-horario',this)">Horários</button>
           <button class="tab-btn" onclick="abrirTab('tab-mural',this)">+ Mural</button>
           <button class="tab-btn" onclick="abrirTab('tab-info',this)">Informativo</button>
         </div>
 
+        <!-- TAB SEMANA ADMIN (NOVA) -->
+        <div class="tab-content ativo" id="tab-semana-admin">
+          <div style="font-size:.95rem;color:var(--amarelo);margin-bottom:12px;font-weight:600;">1. Escolha a aula da
+            semana:</div>
+          <div id="admin-semana-lista" class="admin-aula-list"></div>
+          <hr style="border-color:rgba(255,255,255,.1);margin:16px 0;">
+          <div style="font-size:.95rem;color:var(--amarelo);margin-bottom:10px;font-weight:600;">2. Defina o novo
+            horário:</div>
+          <div class="form-row"><label>Dia selecionado</label><input type="text" id="sw-data" readonly
+              style="opacity:0.7; border-color:transparent;">
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div class="form-row" style="flex:1;"><label>Começa às:</label><input type="time" id="sw-inicio"
+                value="09:00"></div>
+            <div class="form-row" style="flex:1;"><label>Termina às:</label><input type="time" id="sw-fim"
+                value="10:00"></div>
+          </div>
+          <button class="btn-primary" style="background:var(--amarelo); color:var(--verde-escuro); font-weight:bold;"
+            onclick="salvarHorarioSemana()">Confirmar Novo Horário</button>
+          <div class="status-msg" id="msg-sw"></div>
+        </div>
+
         <!-- TAB AULA -->
-        <div class="tab-content ativo" id="tab-aula">
+        <div class="tab-content" id="tab-aula">
           <div class="form-row"><label>Data (dd/mm/aaaa)</label><input type="text" id="a-data"
               placeholder="ex: 15/04/2026"></div>
           <div class="form-row"><label>Matéria</label><input type="text" id="a-materia" placeholder="ex: Informática">
@@ -1082,28 +1147,45 @@
       const hoje = new Date();
       const diaSem = hoje.getDay(); // 0=dom
       const lun = new Date(hoje); lun.setDate(hoje.getDate() - (diaSem === 0 ? 6 : diaSem - 1));
+
+      // Verifica se o Sábado desta semana tem alguma atividade (aula regular ou reposição)
+      const dataSab = new Date(lun); dataSab.setDate(lun.getDate() + 5);
+      const temAulaSabado = aulasDodia(dataSab.getDate(), dataSab.getMonth()).length > 0 || getInfoReposicao(dataSab.getDate(), dataSab.getMonth()) !== null;
+
       const cards = document.getElementById('semana-cards');
       const sub = document.getElementById('semana-sub');
       cards.innerHTML = '';
       const nomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
       let proxAula = null;
+
       for (let i = 0; i < 7; i++) {
         const d = new Date(lun); d.setDate(lun.getDate() + i);
         const dia = d.getDate(), mes = d.getMonth();
         const aulas = aulasDodia(dia, mes);
-        if (!aulas.length) continue;
+        const repos = getInfoReposicao(dia, mes);
+
+        // Lógica: Mostrar se tiver aula/reposição OU se for seg-sáb em semana que tem aula no sábado
+        if (!aulas.length && !repos && !(temAulaSabado && i <= 5)) continue;
+
         const ehHoje = (d.toDateString() === hoje.toDateString());
         const rem = isRemanejada(dia, mes);
         const horario = getHorarioDia(dia, mes, d.getFullYear());
-        if (!ehHoje && d > hoje && !proxAula) proxAula = d;
+        if (!ehHoje && d > hoje && !proxAula && (aulas.length || repos)) proxAula = d;
+
         const c = document.createElement('div');
         c.className = 'aula-card' + (ehHoje ? ' hoje' : '') + (rem ? ' remanejada' : '');
+        c.onclick = () => abrirDia(dia, mes, d.getFullYear());
+
+        let htmlAulas = aulas.map(a => `<div class="card-materia" ${rem ? 'style="text-decoration:line-through;opacity:0.6"' : ''}>📚 ${a.split('–')[1]?.trim() || a}</div>`).join('');
+        if (repos) htmlAulas += `<div class="card-materia" style="color:#00ffff">✨ Novo: ${repos.aula.split('–')[1]?.trim() || repos.aula}</div>`;
+        if (!htmlAulas) htmlAulas = `<div class="card-materia" style="opacity:0.5;font-style:italic;">Atividade Livre</div>`;
+
         c.innerHTML = `<div class="card-dia">${nomes[i]}</div>
       <div class="card-data">${String(dia).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}</div>
-      ${aulas.map(a => `<div class="card-materia">📚 ${a.split('–')[1]?.trim() || a}</div>`).join('')}
+      ${htmlAulas}
       <div class="card-hora">${horario.inicio} – ${horario.fim}</div>
-      ${rem ? `<span class="card-badge">⚠ Remanejada</span>` : ''}
-      ${ehHoje ? `<span class="card-badge" style="background:rgba(245,197,24,.3);color:var(--amarelo)">● Hoje</span>` : ''}`;
+      ${rem ? `<span class="card-badge" style="background:var(--amarelo);color:var(--verde-escuro)">❌ SEM AULA</span>` : ''}
+      ${ehHoje ? `<span class="card-badge" style="background:rgba(245,197,24,.3);color:var(--amarelo)">● Aula de Hoje</span>` : ''}`;
         cards.appendChild(c);
       }
       if (!cards.children.length) cards.innerHTML = '<div style="color:var(--verde-folha);text-align:center;padding:20px;">Sem aulas programadas esta semana.</div>';
@@ -1134,13 +1216,13 @@
 
         let conteudoAulas = aulas.map(a => `<div class="d-aula">${a.split('–')[1]?.trim() || a}</div>`).join('');
         if (repos) {
-          conteudoAulas += `<div class="d-aula" style="color:#00ffff;font-style:italic;">Repos. 📚 ${repos.aula.split('–')[1]?.trim() || repos.aula}</div>`;
+          conteudoAulas += `<div class="d-aula" style="color:#00ffff;font-style:italic;">Nova: 📚 ${repos.aula.split('–')[1]?.trim() || repos.aula}</div>`;
         }
 
         el.innerHTML = `<div class="d-num">${d}</div>` +
           conteudoAulas +
-          (rem ? `<span class="d-badge rem">Reman.</span>` : '') +
-          (repos ? `<span class="d-badge repos">Repos.</span>` : '');
+          (rem ? `<span class="d-badge rem">Mudou</span>` : '') +
+          (repos ? `<span class="d-badge repos">Novo dia</span>` : '');
         el.onclick = () => abrirDia(d, mesAtual, anoAtual);
         grid.appendChild(el);
       }
@@ -1161,18 +1243,23 @@
 
       const horario = getHorarioDia(dia, mes, ano);
       aulas.forEach(a => {
-        html += `<div style="padding:12px;background:rgba(45,106,45,.3);border-radius:12px;margin-bottom:10px;border-left:4px solid var(--verde-claro);">
-      📚 <strong>${a}</strong><br>
-      <span style="font-size:.85rem;color:#ccc">${horario.inicio} – ${horario.fim}</span>
-      ${rem ? `<br><span style="color:var(--amarelo);font-size:.85rem;font-weight:700;">⚠ ${REMANEJADAS[`${dia}/${mes}`]?.motivo || 'Remanejada'}</span>` : ''}
-    </div>`;
+        const itemStyle = rem
+          ? 'padding:12px;background:rgba(245,197,24,.1);border-radius:12px;margin-bottom:10px;border-left:4px solid var(--amarelo);opacity:0.9;'
+          : 'padding:12px;background:rgba(45,106,45,.3);border-radius:12px;margin-bottom:10px;border-left:4px solid var(--verde-claro);';
+
+        html += `<div style="${itemStyle}">
+          ${rem ? '<span style="color:var(--amarelo);font-weight:bold;display:block;margin-bottom:4px;">❌ NÃO HAVERÁ AULA HOJE</span>' : ''}
+          <strong style="${rem ? 'text-decoration:line-through;color:#aaa;' : ''}">📚 ${a}</strong><br>
+          <span style="font-size:.85rem;color:#ccc">${horario.inicio} – ${horario.fim}</span>
+          ${rem ? `<br><span style="color:var(--amarelo);font-size:.85rem;font-weight:700;">➜ ${REMANEJADAS[`${dia}/${mes}`]?.motivo}</span>` : ''}
+        </div>`;
       });
 
       if (repos) {
         html += `<div style="padding:12px;background:rgba(0,255,255,.1);border-radius:12px;margin-bottom:10px;border:1px dashed #00ffff;border-left:4px solid #00ffff;">
       ✨ <strong>${repos.aula}</strong> (Reposição)<br>
       <span style="font-size:.85rem;color:#ccc">${horario.inicio} – ${horario.fim}</span><br>
-      <span style="color:#00ffff;font-size:.85rem;font-weight:700;">➜ Aula remanejada do dia ${repos.origem}</span>
+      <span style="color:#00ffff;font-size:.85rem;font-weight:700;">➜ Esta é a aula que seria no dia ${repos.origem}</span>
     </div>`;
       }
 
@@ -1249,6 +1336,7 @@
       renderListaExtras();
       renderListaMuralAdmin();
       renderListaCustomHorarios();
+      renderSemanaAdmin();
     }
 
     // ══════════════════════════════════════════════
@@ -1289,6 +1377,67 @@
       renderListaCustomHorarios();
       renderSemana();
       renderCal();
+      renderSemanaAdmin();
+    }
+
+    // ── NOVO: ADMIN SEMANA ──
+    function renderSemanaAdmin() {
+      const hoje = new Date();
+      const diaSem = hoje.getDay();
+      const lun = new Date(hoje); lun.setDate(hoje.getDate() - (diaSem === 0 ? 6 : diaSem - 1));
+      const lista = document.getElementById('admin-semana-lista');
+      if (!lista) return;
+      lista.innerHTML = '';
+      const nomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(lun); d.setDate(lun.getDate() + i);
+        const dia = d.getDate(), mes = d.getMonth(), ano = d.getFullYear();
+        const aulas = aulasDodia(dia, mes);
+        if (!aulas.length) continue;
+
+        const dataStr = `${String(dia).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano}`;
+        const horario = getHorarioDia(dia, mes, ano);
+
+        const item = document.createElement('div');
+        item.className = 'admin-aula-item';
+        item.onclick = () => preencherFormSemana(dataStr, horario.inicio, horario.fim);
+        item.innerHTML = `
+          <div class="item-data">${nomes[i]} — ${dataStr}</div>
+          <div class="item-materia">${aulas.join(', ')}</div>
+          <div class="item-hora">${horario.inicio} às ${horario.fim}</div>
+        `;
+        lista.appendChild(item);
+      }
+    }
+
+    function preencherFormSemana(data, inicio, fim) {
+      document.getElementById('sw-data').value = data;
+      document.getElementById('sw-inicio').value = inicio;
+      document.getElementById('sw-fim').value = fim;
+      document.getElementById('sw-inicio').focus();
+    }
+
+    function salvarHorarioSemana() {
+      const data = document.getElementById('sw-data').value;
+      const inicio = document.getElementById('sw-inicio').value;
+      const fim = document.getElementById('sw-fim').value;
+      const msg = document.getElementById('msg-sw');
+
+      if (!data) { msg.textContent = 'Clique em uma aula acima primeiro.'; msg.className = 'status-msg err'; return; }
+
+      const customs = getLS('custom-horarios');
+      const idx = customs.findIndex(c => c.data === data);
+      if (idx > -1) customs[idx] = { data, inicio, fim, id: Date.now() };
+      else customs.push({ data, inicio, fim, id: Date.now() });
+
+      setLS('custom-horarios', customs);
+      msg.textContent = 'Horário atualizado com sucesso!'; msg.className = 'status-msg ok';
+
+      renderSemanaAdmin();
+      renderSemana();
+      renderCal();
+      renderListaCustomHorarios();
     }
 
     // ══════════════════════════════════════════════
@@ -1367,6 +1516,7 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativo'));
       document.getElementById(id).classList.add('ativo');
       btn.classList.add('ativo');
+      if (id === 'tab-semana-admin') renderSemanaAdmin();
     }
 
     // ══════════════════════════════════════════════
@@ -1536,4 +1686,14 @@
   </script>
 </body>
 
-</html>
+</html> document.body.appendChild(el);
+setTimeout(() => el.remove(), 900);
+}
+// excitar pássaros próximos
+animais.filter(a => a instanceof Passaro).forEach(p => {
+const dx = p.x - e.clientX, dy = p.y - e.clientY;
+if (Math.sqrt(dx * dx + dy * dy) < 200) p.excitar(); }); }); // ══════════════════════════════════════════════ // INIT
+  // ══════════════════════════════════════════════ renderSemana(); renderCal(); renderMural(); </script>
+  </body>
+
+  </html>
