@@ -119,6 +119,23 @@
       line-height: 1.1;
     }
 
+    .hero-tag {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5em;
+      color: var(--verde-folha);
+      margin-bottom: 12px;
+      font-weight: 600;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(109, 191, 109, 0.3);
+      animation: fadeInDown 1.5s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 0.8; transform: translateY(0); }
+    }
+
     #hero h1 span {
       color: var(--amarelo);
     }
@@ -759,6 +776,7 @@
       <ellipse cx="78" cy="30" rx="10" ry="7" fill="#4a9a4a" transform="rotate(30 78 30)" />
       <circle cx="60" cy="62" r="5" fill="#f5c518" />
     </svg>
+    <div class="hero-tag">Lua Verde</div>
     <h1>Projeto<br><span>Rede de Saberes</span><br>2026</h1>
     <p>Abril a Novembro · Cultura Kokama · Saberes da Floresta</p>
     <div class="scroll-hint">↓ role para ver as aulas</div>
