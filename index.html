@@ -132,8 +132,15 @@
     }
 
     @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 0.8; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 0.8;
+        transform: translateY(0);
+      }
     }
 
     #hero h1 span {
@@ -856,6 +863,7 @@
       <div id="admin-painel" class="ativo">
         <div class="admin-tabs">
           <button class="tab-btn ativo" onclick="abrirTab('tab-aula',this)">+ Aula Extra</button>
+          <button class="tab-btn" onclick="abrirTab('tab-horario',this)">Horários</button>
           <button class="tab-btn" onclick="abrirTab('tab-mural',this)">+ Mural</button>
           <button class="tab-btn" onclick="abrirTab('tab-info',this)">Informativo</button>
         </div>
@@ -866,8 +874,8 @@
               placeholder="ex: 15/04/2026"></div>
           <div class="form-row"><label>Matéria</label><input type="text" id="a-materia" placeholder="ex: Informática">
           </div>
-          <div class="form-row"><label>Horário início</label><input type="time" id="a-inicio"></div>
-          <div class="form-row"><label>Horário fim</label><input type="time" id="a-fim"></div>
+          <div class="form-row"><label>Horário início</label><input type="time" id="a-inicio" value="09:00"></div>
+          <div class="form-row"><label>Horário fim</label><input type="time" id="a-fim" value="10:00"></div>
           <div class="form-row"><label>Professor</label><input type="text" id="a-prof" placeholder="ex: Professora Ana">
           </div>
           <div class="form-row"><label>Observação</label><input type="text" id="a-obs" placeholder="opcional"></div>
@@ -876,6 +884,18 @@
           <hr style="border-color:rgba(255,255,255,.1);margin:16px 0;">
           <div style="font-size:.8rem;color:var(--verde-folha);">Aulas extras salvas:</div>
           <div id="lista-extras" style="margin-top:8px;font-size:.8rem;"></div>
+        </div>
+        <!-- TAB HORARIO -->
+        <div class="tab-content" id="tab-horario">
+          <div class="form-row"><label>Data (dd/mm/aaaa)</label><input type="text" id="h-data"
+              placeholder="ex: 15/04/2026"></div>
+          <div class="form-row"><label>Novo Horário início</label><input type="time" id="h-inicio" value="09:00"></div>
+          <div class="form-row"><label>Novo Horário fim</label><input type="time" id="h-fim" value="10:00"></div>
+          <button class="btn-primary" onclick="salvarCustomHorario()">Definir para este dia</button>
+          <div class="status-msg" id="msg-h-custom"></div>
+          <hr style="border-color:rgba(255,255,255,.1);margin:16px 0;">
+          <div style="font-size:.8rem;color:var(--verde-folha);">Horários customizados:</div>
+          <div id="lista-h-custom" style="margin-top:8px;font-size:.8rem;"></div>
         </div>
 
         <!-- TAB MURAL -->
@@ -1000,8 +1020,8 @@
       '18/4': { motivo: 'Reposição – 23/05 (sáb)' },
       '1/5': { motivo: 'Reposição – 06/06 (sáb)' },
       '15/5': { motivo: 'Reposição – 20/06 (sáb)' },
-      '13/6': { motivo: 'Reposição – 18/07 (sáb, tarde)' },
-      '27/6': { motivo: 'Reposição – 18/07 (sáb, tarde)' },
+      '13/6': { motivo: 'Reposição – 18/07 (sáb)' },
+      '27/6': { motivo: 'Reposição – 18/07 (sáb)' },
       '10/7': { motivo: 'Reposição – 15/08 (sáb)' },
       '24/7': { motivo: 'Reposição – 29/08 (sáb)' },
       '21/8': { motivo: 'Reposição – 26/09 (sáb)' },
@@ -1048,6 +1068,13 @@
     function getLS(k) { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; } }
     function setLS(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
+    function getHorarioDia(dia, mes, ano) {
+      const customs = getLS('custom-horarios');
+      const dataStr = `${String(dia).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano}`;
+      const match = customs.find(c => c.data === dataStr);
+      return match ? { inicio: match.inicio, fim: match.fim } : { inicio: '09:00', fim: '10:00' };
+    }
+
     // ══════════════════════════════════════════════
     // SEMANA ATUAL
     // ══════════════════════════════════════════════
@@ -1067,13 +1094,14 @@
         if (!aulas.length) continue;
         const ehHoje = (d.toDateString() === hoje.toDateString());
         const rem = isRemanejada(dia, mes);
+        const horario = getHorarioDia(dia, mes, d.getFullYear());
         if (!ehHoje && d > hoje && !proxAula) proxAula = d;
         const c = document.createElement('div');
         c.className = 'aula-card' + (ehHoje ? ' hoje' : '') + (rem ? ' remanejada' : '');
         c.innerHTML = `<div class="card-dia">${nomes[i]}</div>
       <div class="card-data">${String(dia).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}</div>
       ${aulas.map(a => `<div class="card-materia">📚 ${a.split('–')[1]?.trim() || a}</div>`).join('')}
-      <div class="card-hora">08h00 – 12h00</div>
+      <div class="card-hora">${horario.inicio} – ${horario.fim}</div>
       ${rem ? `<span class="card-badge">⚠ Remanejada</span>` : ''}
       ${ehHoje ? `<span class="card-badge" style="background:rgba(245,197,24,.3);color:var(--amarelo)">● Hoje</span>` : ''}`;
         cards.appendChild(c);
@@ -1131,10 +1159,11 @@
       let html = '';
       if (!aulas.length && !extras.length && !repos) { html = '<p style="color:var(--verde-folha)">Sem aulas programadas.</p>'; }
 
+      const horario = getHorarioDia(dia, mes, ano);
       aulas.forEach(a => {
         html += `<div style="padding:12px;background:rgba(45,106,45,.3);border-radius:12px;margin-bottom:10px;border-left:4px solid var(--verde-claro);">
       📚 <strong>${a}</strong><br>
-      <span style="font-size:.85rem;color:#ccc">08h00 – 12h00</span>
+      <span style="font-size:.85rem;color:#ccc">${horario.inicio} – ${horario.fim}</span>
       ${rem ? `<br><span style="color:var(--amarelo);font-size:.85rem;font-weight:700;">⚠ ${REMANEJADAS[`${dia}/${mes}`]?.motivo || 'Remanejada'}</span>` : ''}
     </div>`;
       });
@@ -1142,7 +1171,7 @@
       if (repos) {
         html += `<div style="padding:12px;background:rgba(0,255,255,.1);border-radius:12px;margin-bottom:10px;border:1px dashed #00ffff;border-left:4px solid #00ffff;">
       ✨ <strong>${repos.aula}</strong> (Reposição)<br>
-      <span style="font-size:.85rem;color:#ccc">08h00 – 12h00</span><br>
+      <span style="font-size:.85rem;color:#ccc">${horario.inicio} – ${horario.fim}</span><br>
       <span style="color:#00ffff;font-size:.85rem;font-weight:700;">➜ Aula remanejada do dia ${repos.origem}</span>
     </div>`;
       }
@@ -1219,6 +1248,47 @@
       document.getElementById('modal-admin').classList.add('ativo');
       renderListaExtras();
       renderListaMuralAdmin();
+      renderListaCustomHorarios();
+    }
+
+    // ══════════════════════════════════════════════
+    // ADMIN – HORÁRIOS CUSTOMIZADOS
+    // ══════════════════════════════════════════════
+    function salvarCustomHorario() {
+      const data = document.getElementById('h-data').value;
+      const inicio = document.getElementById('h-inicio').value;
+      const fim = document.getElementById('h-fim').value;
+      const msg = document.getElementById('msg-h-custom');
+      if (!data || !inicio || !fim) { msg.textContent = 'Preencha todos os campos.'; msg.className = 'status-msg err'; return; }
+      const customs = getLS('custom-horarios');
+      // Atualiza se já existir para este dia, ou adiciona novo
+      const idx = customs.findIndex(c => c.data === data);
+      if (idx > -1) customs[idx] = { data, inicio, fim, id: Date.now() };
+      else customs.push({ data, inicio, fim, id: Date.now() });
+      setLS('custom-horarios', customs);
+      msg.textContent = 'Horário atualizado para este dia!'; msg.className = 'status-msg ok';
+      renderListaCustomHorarios();
+      renderSemana();
+      renderCal();
+    }
+
+    function renderListaCustomHorarios() {
+      const customs = getLS('custom-horarios');
+      const el = document.getElementById('lista-h-custom');
+      if (!customs.length) { el.innerHTML = '<span style="color:var(--verde-folha)">Nenhum horário customizado.</span>'; return; }
+      el.innerHTML = customs.map((c, i) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+    <span>${c.data} · ${c.inicio}–${c.fim}</span>
+    <button onclick="removerCustomHorario(${i})" style="background:none;border:none;color:#ff7777;cursor:pointer;">✕</button>
+  </div>`).join('');
+    }
+
+    function removerCustomHorario(i) {
+      const c = getLS('custom-horarios');
+      c.splice(i, 1);
+      setLS('custom-horarios', c);
+      renderListaCustomHorarios();
+      renderSemana();
+      renderCal();
     }
 
     // ══════════════════════════════════════════════
