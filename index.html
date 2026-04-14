@@ -27,9 +27,6 @@ body{
   box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
 
-h2{margin-bottom:10px;}
-
-/* PROXIMA AULA */
 .highlight{
   text-align:center;
   background:linear-gradient(135deg,#2d7a2d,#4aaa4a);
@@ -38,29 +35,19 @@ h2{margin-bottom:10px;}
 /* SEMANA */
 .week{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
 }
 
 .day{
   background:#123;
-  border-radius:14px;
   padding:12px;
+  border-radius:12px;
   text-align:center;
-  transition:.3s;
 }
 
-.day:hover{transform:scale(1.05);}
-
-.x{
-  color:red;
-  font-size:20px;
-  font-weight:bold;
-}
-
-.ok{
-  color:#6dcf6d;
-}
+.x{color:red;font-size:20px;}
+.ok{color:#6dcf6d}
 
 /* MURAL */
 .mural{
@@ -69,37 +56,61 @@ h2{margin-bottom:10px;}
   gap:12px;
 }
 
-.mural img{
+.card img{
   width:100%;
-  border-radius:12px;
+  border-radius:10px;
 }
 
-/* COLLAPSE */
+/* UPLOAD */
+input, textarea{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+}
+
+button{
+  margin-top:10px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#4CAF50;
+  color:#fff;
+  cursor:pointer;
+}
+
+.preview{
+  max-height:200px;
+  margin-top:10px;
+  display:none;
+}
+
+/* collapse */
 .section-header{
   cursor:pointer;
   display:flex;
   justify-content:space-between;
 }
-
 .hidden{display:none;}
 
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-<!-- PROXIMA AULA -->
+<!-- PROXIMA -->
 <div class="card highlight">
   <h2>🔥 Próxima Aula</h2>
-  <p id="proxima">Carregando...</p>
+  <p>Segunda - Informática</p>
 </div>
 
 <!-- SEMANA -->
 <div class="card">
   <div class="section-header" onclick="toggle('semana')">
-    <h2>📅 Semana</h2>
-    <span>▼</span>
+    <h2>📅 Semana</h2><span>▼</span>
   </div>
   <div id="semana" class="week"></div>
 </div>
@@ -107,17 +118,144 @@ h2{margin-bottom:10px;}
 <!-- MURAL -->
 <div class="card">
   <div class="section-header" onclick="toggle('mural')">
-    <h2>📸 Mural</h2>
-    <span>▼</span>
+    <h2>📸 Mural</h2><span>▼</span>
   </div>
+
+  <!-- UPLOAD -->
+  <input type="file" id="file" accept="image/*">
+  <img id="preview" class="preview">
+  <input type="text" id="titulo" placeholder="Título">
+  <textarea id="legenda" placeholder="Legenda"></textarea>
+  <button onclick="enviar()">Publicar</button>
+  <p id="msg"></p>
+
   <div id="mural" class="mural"></div>
 </div>
 
 </div>
 
 <script>
+const API = "https://script.google.com/macros/s/AKfycby2QQCs141ukr8bcsDjshSnaHcG1LTHZfGA0K0NwE16bNu4E9NcIGPBCGQgf_gFtBxP/exec";
 
-// EXEMPLO DE DIAS
+let imagemBase64 = "";
+
+// ───────── PREVIEW + COMPRESSÃO
+document.getElementById("file").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(ev){
+    const img = new Image();
+    img.onload = function(){
+
+      const canvas = document.createElement("canvas");
+      let w = img.width;
+      let h = img.height;
+
+      const max = 800;
+      if(w > max){
+        h *= max/w;
+        w = max;
+      }
+
+      canvas.width = w;
+      canvas.height = h;
+
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+
+      imagemBase64 = canvas.toDataURL("image/jpeg",0.7);
+
+      const preview = document.getElementById("preview");
+      preview.src = imagemBase64;
+      preview.style.display="block";
+    };
+    img.src = ev.target.result;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+// ───────── ENVIAR
+async function enviar(){
+  const titulo = document.getElementById("titulo").value;
+  const legenda = document.getElementById("legenda").value;
+  const msg = document.getElementById("msg");
+
+  if(!imagemBase64 || !titulo){
+    msg.innerText="Imagem e título obrigatórios";
+    return;
+  }
+
+  msg.innerText="Enviando...";
+
+  const up = await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      base64: imagemBase64.split(",")[1],
+      type:"image/jpeg",
+      name:"img.jpg"
+    })
+  });
+
+  const data = await up.json();
+
+  await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"saveMural",
+      url:data.url,
+      titulo,
+      legenda,
+      id:data.id
+    })
+  });
+
+  msg.innerText="Publicado!";
+  carregar();
+}
+
+// ───────── CARREGAR MURAL
+async function carregar(){
+  const res = await fetch(API+"?action=getMural");
+  const data = await res.json();
+
+  const mural = document.getElementById("mural");
+  mural.innerHTML="";
+
+  data.mural.forEach((item,i)=>{
+    mural.innerHTML += `
+      <div class="card">
+        <img src="${item.url}">
+        <h4>${item.titulo}</h4>
+        <p>${item.legenda||""}</p>
+        <button onclick="remover(${i})">Remover</button>
+      </div>
+    `;
+  });
+}
+
+// ───────── REMOVER
+async function remover(i){
+  const res = await fetch(API+"?action=getMural");
+  const data = await res.json();
+
+  let mural = data.mural;
+  const removido = mural.splice(i,1)[0];
+
+  await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({delete:true,id:removido.id})
+  });
+
+  await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({action:"updateMural",mural})
+  });
+
+  carregar();
+}
+
+// ───────── SEMANA (X vermelho)
 const dias = [
   {nome:'Seg',tem:true},
   {nome:'Ter',tem:false},
@@ -135,30 +273,20 @@ function renderSemana(){
   dias.forEach(d=>{
     el.innerHTML += `
       <div class="day">
-        <strong>${d.nome}</strong><br>
-        ${d.tem ? '<span class="ok">✔ Aula</span>' : '<span class="x">✖</span>'}
+        ${d.nome}<br>
+        ${d.tem ? '<span class="ok">✔</span>' : '<span class="x">✖</span>'}
       </div>
     `;
   });
 }
 
+// ───────── UI
 function toggle(id){
-  const el = document.getElementById(id);
-  el.classList.toggle('hidden');
-}
-
-// MOCK MURAL
-function renderMural(){
-  const mural = document.getElementById('mural');
-  mural.innerHTML = `
-    <img src="https://placehold.co/300x200">
-    <img src="https://placehold.co/300x200">
-    <img src="https://placehold.co/300x200">
-  `;
+  document.getElementById(id).classList.toggle('hidden');
 }
 
 renderSemana();
-renderMural();
+carregar();
 
 </script>
 
