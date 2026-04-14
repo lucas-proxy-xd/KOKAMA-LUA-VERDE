@@ -1,217 +1,277 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Mural de Avisos</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kokama – Rede de Saberes 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --g1:#0a1f0a;--g2:#0f2d0f;--g3:#1a3d1a;
+  --verde:#2d7a2d;--verde-claro:#4aaa4a;--folha:#6dcf6d;
+  --ouro:#f5c518;--ouro-claro:#ffe066;--ouro-dim:#b8940f;
+  --cyan:#00e5ff;--coral:#ff6b35;
+  --glass:rgba(255,255,255,0.06);--glass2:rgba(255,255,255,0.10);
+  --border:rgba(109,207,109,0.18);--border2:rgba(245,197,24,0.4);
+  --txt:#f0f7f0;--txt2:#a0b0a0;
+}
+*{margin:0;padding:0;box-sizing:border-box;outline:none;}
+body{
+  background:var(--g1);color:var(--txt);
+  font-family:'Inter',sans-serif;overflow-x:hidden;
+  line-height:1.6;
+}
+#canvas-bg{position:fixed;top:0;left:0;z-index:-1;pointer-events:none;}
 
-    :root {
-      --primary: #2d7a2d;
-      --gold: #f5c518;
-      --bg: #0a1f0a;
-      --glass: rgba(255, 255, 255, 0.05);
-      --text: #f0f7f0;
-    }
+header{
+  padding:100px 20px 60px;text-align:center;
+  background:radial-gradient(circle at center, var(--g2), var(--g1));
+}
+.badge{
+  display:inline-block;padding:6px 16px;border-radius:30px;
+  background:var(--glass);border:1px solid var(--border);
+  font-size:12px;font-weight:600;color:var(--ouro);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:20px;
+}
+h1{
+  font-family:'Playfair Display',serif;font-size:clamp(40px,8vw,85px);
+  font-weight:900;line-height:1;margin-bottom:20px;
+  background:linear-gradient(to bottom, #fff, #a0b0a0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+/* SEÇÃO MURAL */
+.section-title{text-align:center;margin-bottom:40px;padding:0 20px;}
+.section-title h2{font-family:'Playfair Display',serif;font-size:32px;color:var(--ouro);}
 
-    h1 { font-weight: 800; letter-spacing: -1px; color: var(--gold); }
+.mural-grid{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:25px;max-width:1200px;margin:0 auto 60px;padding:0 20px;
+}
+.mural-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:22px;overflow:hidden;position:relative;
+  transition:all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.mural-card:hover{transform:translateY(-10px);border-color:var(--ouro-claro);}
+.mural-card img{width:100%;height:300px;object-fit:cover;display:block;}
 
-    /* GRID DO MURAL */
-    #mural-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 1200px;
-      margin-top: 30px;
-    }
+.btn-del{
+  position:absolute;top:10px;right:10px;background:rgba(255,0,0,0.6);
+  border:none;color:white;padding:8px 12px;border-radius:12px;
+  cursor:pointer;font-size:12px;backdrop-filter:blur(5px);
+}
 
-    .card {
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-      transition: 0.4s ease;
-      position: relative;
-    }
-
-    .card:hover { transform: translateY(-10px); border-color: var(--gold); }
-
-    .card img { width: 100%; height: 250px; object-fit: cover; }
-
-    .card-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-
-    .btn-del {
-      background: rgba(255,0,0,0.2);
-      border: none; color: #ff4d4d;
-      padding: 5px 10px; border-radius: 8px; cursor: pointer;
-    }
-
-    /* ÁREA DE UPLOAD ADMIN */
-    .admin-section {
-      background: var(--glass);
-      padding: 25px;
-      border-radius: 24px;
-      border: 1px solid var(--primary);
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-    }
-
-    .upload-zone {
-      border: 2px dashed var(--primary);
-      padding: 30px;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin: 15px 0;
-    }
-
-    .upload-zone:hover, .upload-zone.dragover { background: rgba(45, 122, 45, 0.2); border-color: var(--gold); }
-
-    input[type="password"] {
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white; padding: 10px; border-radius: 8px; width: 80%; margin-bottom: 10px;
-    }
-
-    #preview-img { width: 100%; border-radius: 10px; display: none; margin-top: 10px; }
-
-    .loading { color: var(--gold); font-weight: bold; display: none; }
-  </style>
+/* ÁREA ADMIN */
+.admin-trigger{
+  position:fixed;bottom:20px;right:20px;background:var(--ouro);
+  width:50px;height:50px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,0.3);z-index:100;
+}
+#admin-panel{
+  position:fixed;bottom:80px;right:20px;background:var(--g3);
+  padding:20px;border-radius:20px;border:1px solid var(--ouro);
+  display:none;z-index:100;width:300px;box-shadow:0 20px 40px rgba(0,0,0,0.5);
+}
+.admin-panel input{
+  width:100%;padding:10px;margin-bottom:10px;border-radius:8px;
+  border:1px solid var(--border);background:var(--g1);color:white;
+}
+.btn-upload{
+  width:100%;padding:12px;background:var(--verde);color:white;
+  border:none;border-radius:10px;cursor:pointer;font-weight:700;
+}
+</style>
 </head>
 <body>
 
-  <h1>🌿 MURAL COMUNITÁRIO</h1>
+<canvas id="canvas-bg"></canvas>
 
-  <div class="admin-section">
-    <h3>Painel do Administrador</h3>
-    <input type="password" id="senha" placeholder="Senha Admin">
-    
-    <div class="upload-zone" id="drop-zone">
-      <p id="upload-msg">Arraste uma foto ou clique aqui</p>
-      <input type="file" id="file-input" hidden accept="image/*">
-      <img id="preview-img">
-    </div>
+<header>
+  <div class="badge">Projeto 2026</div>
+  <h1>Kokama</h1>
+  <p>Rede de Saberes & Ancestralidade</p>
+</header>
 
-    <div id="status" class="loading">Processando...</div>
+<div class="section-title">
+  <h2>Mural da Comunidade</h2>
+  <p>Espaço Admin para atualizações</p>
+</div>
+
+<div class="mural-grid" id="mural-container">
   </div>
 
-  <div id="mural-container"></div>
+<div class="admin-trigger" onclick="toggleAdmin()">🔑</div>
 
-  <script>
-    const WEB_APP_URL = "SUA_URL_DO_DEPLOY_AQUI"; // Opcional se usar google.script.run
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-    const preview = document.getElementById('preview-img');
-    const statusTxt = document.getElementById('status');
+<div id="admin-panel">
+  <h3 style="margin-bottom:15px; color:var(--ouro)">Área Admin</h3>
+  <input type="password" id="senha-admin" placeholder="Senha Mestre">
+  <input type="file" id="file-input" accept="image/*">
+  <div id="status-upload" style="font-size:12px; margin-bottom:10px; color:var(--ouro-claro)"></div>
+  <button class="btn-upload" onclick="iniciarUpload()">Publicar no Mural</button>
+</div>
 
-    // Carregar Mural ao Iniciar
-    async function loadMural() {
-      const resp = await fetch(`${window.location.href.split('?')[0]}?action=getMural`);
-      const data = await resp.json();
-      renderMural(data.mural);
-    }
+<script>
+const scriptURL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI"; // COLE SUA URL AQUI
 
-    function renderMural(items) {
-      const container = document.getElementById('mural-container');
-      container.innerHTML = items.map(img => `
-        <div class="card">
-          <img src="${img.url}">
-          <div class="card-info">
-            <span>📅 ${img.data}</span>
-            <button class="btn-del" onclick="deleteImg('${img.id}')">Excluir</button>
-          </div>
-        </div>
-      `).join('');
-    }
+function toggleAdmin(){
+  const panel = document.getElementById('admin-panel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+}
 
-    // Drag & Drop
-    dropZone.onclick = () => fileInput.click();
-    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
-    dropZone.ondragleave = () => dropZone.classList.remove('dragover');
-    dropZone.ondrop = (e) => {
-      e.preventDefault();
-      handleFile(e.dataTransfer.files[0]);
-    };
-    fileInput.onchange = (e) => handleFile(e.target.files[0]);
+// 1. Carregar Mural ao Iniciar
+async function carregarMural() {
+  const resp = await fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'getMural', senha: 'KOKAMA2026' }) // Get não precisa de senha real no meu script mas enviamos por padrão
+  });
+  const data = await resp.json();
+  renderizar(data.mural);
+}
 
-    function handleFile(file) {
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-        document.getElementById('upload-msg').innerText = "Foto selecionada!";
-        compressAndUpload(file);
-      };
-      reader.readAsDataURL(file);
-    }
+function renderizar(lista) {
+  const container = document.getElementById('mural-container');
+  if(!lista || lista.length === 0){
+    container.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Nenhuma imagem publicada.</p>";
+    return;
+  }
+  container.innerHTML = lista.map(img => `
+    <div class="mural-card">
+      <img src="${img.url}">
+      <button class="btn-del" onclick="deletar('${img.id}')">Excluir</button>
+    </div>
+  `).join('');
+}
 
-    function compressAndUpload(file) {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const MAX_W = 800;
-        let w = img.width; let h = img.height;
-        if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
-        canvas.width = w; canvas.height = h;
-        ctx.drawImage(img, 0, 0, w, h);
-        
-        const base64 = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
-        upload(base64, file.name);
-      };
-    }
+// 2. Lógica de Upload com Compressão
+async function iniciarUpload() {
+  const fileInput = document.getElementById('file-input');
+  const senha = document.getElementById('senha-admin').value;
+  const status = document.getElementById('status-upload');
 
-    async function upload(base64, name) {
-      const senha = document.getElementById('senha').value;
-      if(!senha) { alert("Digite a senha!"); return; }
+  if (!fileInput.files[0] || !senha) {
+    alert("Selecione uma foto e digite a senha!");
+    return;
+  }
 
-      statusTxt.style.display = 'block';
-      const resp = await fetch(window.location.href, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'upload', senha, base64, name, type: 'image/jpeg' })
-      });
-      const data = await resp.json();
+  status.innerText = "Processando imagem...";
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const img = new Image();
+    img.src = e.target.result;
+    img.onload = function() {
+      // Compressão Canvas
+      const canvas = document.createElement('canvas');
+      const MAX_W = 800;
+      let w = img.width;
+      let h = img.height;
+      if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
       
-      statusTxt.style.display = 'none';
-      if(data.ok) {
-        renderMural(data.mural);
-        preview.style.display = 'none';
-        document.getElementById('upload-msg').innerText = "Publicado com sucesso!";
-      } else {
-        alert("Erro: " + data.erro);
-      }
-    }
+      const base64 = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+      enviar(base64, file.name, senha);
+    };
+  };
+  reader.readAsDataURL(file);
+}
 
-    async function deleteImg(id) {
-      const senha = document.getElementById('senha').value;
-      if(!senha) { alert("Senha necessária para excluir"); return; }
-      if(!confirm("Deseja remover esta imagem?")) return;
+async function enviar(base64, name, senha) {
+  const status = document.getElementById('status-upload');
+  status.innerText = "Enviando para o Drive...";
 
-      const resp = await fetch(window.location.href, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'delete', senha, id })
-      });
-      const data = await resp.json();
-      if(data.ok) renderMural(data.mural);
-    }
+  const resp = await fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'upload',
+      senha: senha,
+      base64: base64,
+      name: name,
+      type: 'image/jpeg'
+    })
+  });
 
-    loadMural();
-  </script>
+  const res = await resp.json();
+  if (res.ok) {
+    status.innerText = "Publicado!";
+    renderizar(res.mural);
+    document.getElementById('file-input').value = "";
+  } else {
+    alert("Erro: " + res.erro);
+    status.innerText = "";
+  }
+}
+
+// 3. Deletar Imagem
+async function deletar(id) {
+  const senha = prompt("Digite a senha de ADMIN para excluir:");
+  if (!senha) return;
+
+  const resp = await fetch(scriptURL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'delete', senha: senha, id: id })
+  });
+  
+  const res = await resp.json();
+  if (res.ok) {
+    renderizar(res.mural);
+  } else {
+    alert(res.erro);
+  }
+}
+
+// Inicia
+carregarMural();
+
+// --- ANIMAÇÃO DOS PÁSSAROS/FOLHAS (O SEU CÓDIGO ORIGINAL) ---
+const canvas = document.getElementById('canvas-bg');
+const cx = canvas.getContext('2d');
+let W, H, animais = [];
+
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W; canvas.height = H;
+}
+window.addEventListener('resize', resize);
+resize();
+
+class Passaro {
+  constructor(){ this.reset(); }
+  reset(){
+    this.x = -50; this.y = Math.random() * H * 0.5;
+    this.v = 1 + Math.random() * 2;
+    this.amp = 10 + Math.random() * 20;
+    this.f = 0.02 + Math.random() * 0.03;
+    this.t = 0;
+  }
+  update(){
+    this.x += this.v; this.t += this.f;
+    if(this.x > W + 50) this.reset();
+  }
+  draw(){
+    const dy = Math.sin(this.t) * this.amp;
+    cx.fillStyle = 'rgba(255,255,255,0.2)';
+    cx.beginPath();
+    cx.arc(this.x, this.y + dy, 2, 0, Math.PI*2);
+    cx.fill();
+  }
+}
+
+function init() {
+  for(let i=0; i<5; i++) animais.push(new Passaro());
+}
+init();
+
+function loop(){
+  cx.clearRect(0,0,W,H);
+  animais.forEach(a => { a.update(); a.draw(); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
 </body>
 </html>
