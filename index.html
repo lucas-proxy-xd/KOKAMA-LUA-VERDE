@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kokama Premium</title>
+<title>Kokama</title>
 
 <style>
 body{
@@ -24,45 +24,20 @@ body{
   border-radius:18px;
   padding:20px;
   margin-bottom:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
 
-.highlight{
-  text-align:center;
-  background:linear-gradient(135deg,#2d7a2d,#4aaa4a);
-}
-
-/* SEMANA */
-.week{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:10px;
-}
-
-.day{
-  background:#123;
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
-}
-
-.x{color:red;font-size:20px;}
-.ok{color:#6dcf6d}
-
-/* MURAL */
 .mural{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:12px;
 }
 
-.card img{
+.mural img{
   width:100%;
   border-radius:10px;
 }
 
-/* UPLOAD */
-input, textarea{
+input,textarea{
   width:100%;
   margin-top:10px;
   padding:10px;
@@ -77,22 +52,17 @@ button{
   border-radius:10px;
   background:#4CAF50;
   color:#fff;
-  cursor:pointer;
 }
 
 .preview{
-  max-height:200px;
-  margin-top:10px;
+  max-width:100%;
   display:none;
+  margin-top:10px;
+  border-radius:10px;
 }
 
-/* collapse */
-.section-header{
-  cursor:pointer;
-  display:flex;
-  justify-content:space-between;
-}
-.hidden{display:none;}
+.x{color:red;font-weight:bold;}
+.ok{color:#6dcf6d;}
 
 </style>
 </head>
@@ -101,45 +71,30 @@ button{
 
 <div class="container">
 
-<!-- PROXIMA -->
-<div class="card highlight">
-  <h2>🔥 Próxima Aula</h2>
-  <p>Segunda - Informática</p>
-</div>
+<h2>📅 Semana</h2>
+<div id="semana"></div>
 
-<!-- SEMANA -->
-<div class="card">
-  <div class="section-header" onclick="toggle('semana')">
-    <h2>📅 Semana</h2><span>▼</span>
-  </div>
-  <div id="semana" class="week"></div>
-</div>
+<h2>📸 Mural</h2>
 
-<!-- MURAL -->
-<div class="card">
-  <div class="section-header" onclick="toggle('mural')">
-    <h2>📸 Mural</h2><span>▼</span>
-  </div>
+<input type="file" id="file">
+<img id="preview" class="preview">
+<input type="text" id="titulo" placeholder="Título">
+<textarea id="legenda" placeholder="Legenda"></textarea>
+<button onclick="enviar()">Publicar</button>
 
-  <!-- UPLOAD -->
-  <input type="file" id="file" accept="image/*">
-  <img id="preview" class="preview">
-  <input type="text" id="titulo" placeholder="Título">
-  <textarea id="legenda" placeholder="Legenda"></textarea>
-  <button onclick="enviar()">Publicar</button>
-  <p id="msg"></p>
+<p id="msg"></p>
 
-  <div id="mural" class="mural"></div>
-</div>
+<div id="mural" class="mural"></div>
 
 </div>
 
 <script>
+
 const API = "https://script.google.com/macros/s/AKfycby2QQCs141ukr8bcsDjshSnaHcG1LTHZfGA0K0NwE16bNu4E9NcIGPBCGQgf_gFtBxP/exec";
 
 let imagemBase64 = "";
 
-// ───────── PREVIEW + COMPRESSÃO
+// PREVIEW + COMPRESSÃO
 document.getElementById("file").addEventListener("change", e=>{
   const file = e.target.files[0];
   const reader = new FileReader();
@@ -149,8 +104,7 @@ document.getElementById("file").addEventListener("change", e=>{
     img.onload = function(){
 
       const canvas = document.createElement("canvas");
-      let w = img.width;
-      let h = img.height;
+      let w = img.width, h = img.height;
 
       const max = 800;
       if(w > max){
@@ -175,7 +129,7 @@ document.getElementById("file").addEventListener("change", e=>{
   reader.readAsDataURL(file);
 });
 
-// ───────── ENVIAR
+// ENVIAR
 async function enviar(){
   const titulo = document.getElementById("titulo").value;
   const legenda = document.getElementById("legenda").value;
@@ -214,7 +168,7 @@ async function enviar(){
   carregar();
 }
 
-// ───────── CARREGAR MURAL
+// CARREGAR
 async function carregar(){
   const res = await fetch(API+"?action=getMural");
   const data = await res.json();
@@ -234,7 +188,7 @@ async function carregar(){
   });
 }
 
-// ───────── REMOVER
+// REMOVER
 async function remover(i){
   const res = await fetch(API+"?action=getMural");
   const data = await res.json();
@@ -255,34 +209,25 @@ async function remover(i){
   carregar();
 }
 
-// ───────── SEMANA (X vermelho)
+// SEMANA (❌ automático)
 const dias = [
-  {nome:'Seg',tem:true},
-  {nome:'Ter',tem:false},
-  {nome:'Qua',tem:true},
-  {nome:'Qui',tem:false},
-  {nome:'Sex',tem:true},
-  {nome:'Sáb',tem:false},
-  {nome:'Dom',tem:false},
+  {nome:'Seg',inf:true},
+  {nome:'Ter',inf:false},
+  {nome:'Qua',inf:true},
+  {nome:'Qui',inf:false},
+  {nome:'Sex',inf:true},
+  {nome:'Sáb',inf:false},
+  {nome:'Dom',inf:false},
 ];
 
 function renderSemana(){
-  const el = document.getElementById('semana');
-  el.innerHTML='';
+  const el = document.getElementById("semana");
 
-  dias.forEach(d=>{
-    el.innerHTML += `
-      <div class="day">
-        ${d.nome}<br>
-        ${d.tem ? '<span class="ok">✔</span>' : '<span class="x">✖</span>'}
-      </div>
-    `;
-  });
-}
-
-// ───────── UI
-function toggle(id){
-  document.getElementById(id).classList.toggle('hidden');
+  el.innerHTML = dias.map(d=>`
+    <div>
+      ${d.nome} - ${d.inf ? '<span class=\"ok\">✔ Informática</span>' : '<span class=\"x\">✖</span>'}
+    </div>
+  `).join('');
 }
 
 renderSemana();
