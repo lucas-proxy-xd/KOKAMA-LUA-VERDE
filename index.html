@@ -239,6 +239,45 @@ section.cal-section{position:relative;z-index:1;padding:60px 24px;}
 .contato-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px;}
 .contato-val{font-size:.88rem;color:var(--txt);font-weight:500;line-height:1.5;}
 
+/* ── ADMIN SOBRE NÓS ── */
+.sobre-admin-section{margin-bottom:28px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.sobre-admin-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.04);cursor:pointer;user-select:none;}
+.sobre-admin-header span{font-size:.82rem;font-weight:700;color:var(--txt2);display:flex;align-items:center;gap:8px;}
+.sobre-admin-header .chevron{transition:.3s;color:var(--txt3);font-size:.7rem;}
+.sobre-admin-body{display:none;padding:16px;}
+.sobre-admin-body.aberto{display:block;}
+/* item editável inline */
+.sobre-item-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;margin-bottom:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);transition:.2s;}
+.sobre-item-row:hover{border-color:rgba(109,207,109,.25);}
+.sobre-item-preview{flex:1;min-width:0;}
+.sobre-item-preview .sip-title{font-size:.82rem;font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sobre-item-preview .sip-sub{font-size:.7rem;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sobre-item-actions{display:flex;gap:4px;flex-shrink:0;}
+.sobre-item-actions button{background:none;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.78rem;padding:4px 8px;transition:.2s;color:var(--txt2);}
+.sobre-item-actions .btn-edit-item:hover{border-color:var(--verde-claro);color:var(--folha);}
+.sobre-item-actions .btn-del-item:hover{border-color:rgba(255,80,80,.4);color:#ff7777;}
+/* mini form de adição/edição */
+.sobre-mini-form{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:10px;display:none;}
+.sobre-mini-form.aberto{display:block;}
+.smf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.smf-field{margin-bottom:10px;}
+.smf-field label{display:block;font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:5px;}
+.smf-field input,.smf-field textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(109,207,109,.18);border-radius:8px;padding:9px 12px;color:var(--txt);font-size:.82rem;outline:none;font-family:'Inter',sans-serif;transition:.2s;}
+.smf-field input:focus,.smf-field textarea:focus{border-color:var(--verde-claro);}
+.smf-field textarea{min-height:70px;resize:vertical;}
+.smf-actions{display:flex;gap:8px;margin-top:4px;}
+.smf-actions button{flex:1;padding:9px;border-radius:8px;border:none;font-size:.78rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:.2s;}
+.btn-smf-save{background:linear-gradient(135deg,var(--verde),var(--verde-claro));color:#fff;}
+.btn-smf-cancel{background:rgba(255,255,255,.06);color:var(--txt2);border:1px solid var(--border)!important;}
+.btn-add-sobre{width:100%;padding:9px;border-radius:8px;border:1px dashed rgba(109,207,109,.3);background:transparent;color:var(--txt3);font-size:.78rem;font-weight:600;cursor:pointer;transition:.25s;margin-top:8px;font-family:'Inter',sans-serif;}
+.btn-add-sobre:hover{border-color:var(--verde-claro);color:var(--folha);background:rgba(74,170,74,.05);}
+/* sobre hero editor */
+.hero-editor-field{margin-bottom:12px;}
+.hero-editor-field label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;}
+.hero-editor-field input,.hero-editor-field textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(109,207,109,.18);border-radius:10px;padding:10px 14px;color:var(--txt);font-size:.85rem;outline:none;font-family:'Inter',sans-serif;transition:.2s;}
+.hero-editor-field input:focus,.hero-editor-field textarea:focus{border-color:var(--verde-claro);}
+.hero-editor-field textarea{min-height:72px;resize:vertical;}
+
 /* ══════════════════════════════
    PÁGINA: CERTIFICADOS
 ══════════════════════════════ */
@@ -552,25 +591,23 @@ footer strong{color:var(--folha);}
 ════════════════════════════ -->
 <div class="page" id="page-sobre">
 
-  <div class="sobre-hero">
-    <div class="sobre-hero-tag">Projeto Cultural Indígena · Manaus/AM</div>
-    <h2>Sobre o Projeto<br>Rede de Saberes</h2>
-    <p>Preservando a língua, a cultura e os saberes ancestrais do povo Kokama através da educação comunitária e da arte.</p>
+  <div class="sobre-hero" id="sobre-hero-wrap">
+    <div class="sobre-hero-tag" id="sobre-hero-tag">Projeto Cultural Indígena · Manaus/AM</div>
+    <h2 id="sobre-hero-titulo">Sobre o Projeto<br>Rede de Saberes</h2>
+    <p id="sobre-hero-desc">Preservando a língua, a cultura e os saberes ancestrais do povo Kokama através da educação comunitária e da arte.</p>
   </div>
 
   <!-- HISTÓRIA -->
-  <div class="sobre-section">
+  <div class="sobre-section" id="sobre-historia-wrap">
     <div class="historia-grid">
       <div class="historia-img-wrap">
-        <img src="https://placehold.co/600x380/1a3d1a/6dcf6d?text=Povo+Kokama" alt="Povo Kokama" id="sobre-foto-principal">
-        <div class="historia-img-badge">Desde 2026 · Manaus/AM</div>
+        <img id="sobre-historia-foto" src="https://placehold.co/600x380/1a3d1a/6dcf6d?text=Povo+Kokama" alt="Povo Kokama">
+        <div class="historia-img-badge" id="sobre-historia-badge">Desde 2026 · Manaus/AM</div>
       </div>
       <div class="historia-txt">
-        <div class="hs-label">Nossa história</div>
-        <h3>Raízes da Floresta Amazônica</h3>
-        <p>O povo Kokama é um dos povos indígenas da Amazônia com rica tradição oral, artística e culinária. A <strong>Rede de Saberes</strong> nasceu da necessidade de fortalecer a identidade cultural Kokama entre as novas gerações.</p>
-        <p>Por meio de aulas semanais de Informática, Costura, Música, Culinária e Artesanato, o projeto conecta anciãos e jovens, transmitindo conhecimentos que atravessam séculos.</p>
-        <p>O Ajuri — prática coletiva de trabalho comunitário — é o espírito que guia cada encontro: a força está na união e no compartilhar.</p>
+        <div class="hs-label" id="sobre-historia-label">Nossa história</div>
+        <h3 id="sobre-historia-titulo">Raízes da Floresta Amazônica</h3>
+        <div id="sobre-historia-paragrafos"></div>
       </div>
     </div>
   </div>
@@ -583,38 +620,7 @@ footer strong{color:var(--folha);}
         <h2 class="sec-title">Nossos valores</h2>
         <p class="sec-desc">Princípios que sustentam cada aula, cada encontro, cada sabedoria partilhada</p>
       </div>
-      <div class="valores-grid">
-        <div class="valor-card">
-          <div class="valor-icon">🌿</div>
-          <div class="valor-nome">Pertencimento</div>
-          <div class="valor-desc">Fortalecer a identidade Kokama e o orgulho de nossas origens amazônicas.</div>
-        </div>
-        <div class="valor-card">
-          <div class="valor-icon">🤝</div>
-          <div class="valor-nome">Ajuri</div>
-          <div class="valor-desc">O trabalho coletivo e solidário como força que move a comunidade.</div>
-        </div>
-        <div class="valor-card">
-          <div class="valor-icon">📚</div>
-          <div class="valor-nome">Educação</div>
-          <div class="valor-desc">Integrar saberes tradicionais com habilidades contemporâneas para o futuro.</div>
-        </div>
-        <div class="valor-card">
-          <div class="valor-icon">🎨</div>
-          <div class="valor-nome">Expressão</div>
-          <div class="valor-desc">A arte, a música e o artesanato como vozes vivas da cultura Kokama.</div>
-        </div>
-        <div class="valor-card">
-          <div class="valor-icon">🌺</div>
-          <div class="valor-nome">Ancestralidade</div>
-          <div class="valor-desc">Honrar os mais velhos e preservar o conhecimento que vem da floresta.</div>
-        </div>
-        <div class="valor-card">
-          <div class="valor-icon">🌱</div>
-          <div class="valor-nome">Futuro</div>
-          <div class="valor-desc">Semear hoje para que as próximas gerações floresçam com raízes firmes.</div>
-        </div>
-      </div>
+      <div class="valores-grid" id="sobre-valores-grid"></div>
     </div>
   </div>
 
@@ -625,44 +631,10 @@ footer strong{color:var(--folha);}
       <h2 class="sec-title">Nossa equipe</h2>
       <p class="sec-desc">Educadores, lideranças comunitárias e parceiros que dedicam seu tempo e saber ao projeto</p>
     </div>
-    <div class="equipe-grid" id="equipe-grid">
-      <!-- cards gerados pelo admin ou estáticos abaixo -->
-      <div class="equipe-card">
-        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🌿</div>
-        <div class="equipe-info">
-          <div class="equipe-nome">Coordenação Geral</div>
-          <div class="equipe-cargo">Liderança do Projeto</div>
-          <div class="equipe-bio">Responsável pela articulação das atividades e pela relação com a comunidade Kokama.</div>
-        </div>
-      </div>
-      <div class="equipe-card">
-        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🎵</div>
-        <div class="equipe-info">
-          <div class="equipe-nome">Educador de Música</div>
-          <div class="equipe-cargo">Professor de Música</div>
-          <div class="equipe-bio">Transmite cantos e ritmos tradicionais Kokama com instrumentos da floresta.</div>
-        </div>
-      </div>
-      <div class="equipe-card">
-        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🧵</div>
-        <div class="equipe-info">
-          <div class="equipe-nome">Mestra Artesã</div>
-          <div class="equipe-cargo">Professora de Costura e Artesanato</div>
-          <div class="equipe-bio">Guardiã dos padrões e técnicas têxteis ancestrais do povo Kokama.</div>
-        </div>
-      </div>
-      <div class="equipe-card">
-        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🍲</div>
-        <div class="equipe-info">
-          <div class="equipe-nome">Mestra Culinária</div>
-          <div class="equipe-cargo">Professora de Culinária</div>
-          <div class="equipe-bio">Preserva receitas e técnicas de preparo de alimentos tradicionais da Amazônia.</div>
-        </div>
-      </div>
-    </div>
+    <div class="equipe-grid" id="sobre-equipe-grid"></div>
   </div>
 
-  <!-- GALERIA DO PROJETO -->
+  <!-- GALERIA -->
   <div class="sobre-section alt">
     <div class="sobre-inner">
       <div class="sec-head" style="margin-bottom:0;">
@@ -683,36 +655,7 @@ footer strong{color:var(--folha);}
       <h2 class="sec-title">Contato</h2>
       <p class="sec-desc">Entre em contato com a equipe do projeto Rede de Saberes Kokama</p>
     </div>
-    <div class="contato-grid">
-      <div class="contato-item">
-        <div class="contato-icon">📍</div>
-        <div>
-          <div class="contato-label">Localização</div>
-          <div class="contato-val">Manaus, Amazonas<br>Região Norte – Brasil</div>
-        </div>
-      </div>
-      <div class="contato-item">
-        <div class="contato-icon">📧</div>
-        <div>
-          <div class="contato-label">E-mail</div>
-          <div class="contato-val">rededesaberes<br>kokama@email.com</div>
-        </div>
-      </div>
-      <div class="contato-item">
-        <div class="contato-icon">📱</div>
-        <div>
-          <div class="contato-label">WhatsApp / Telefone</div>
-          <div class="contato-val">(92) 99999-0000</div>
-        </div>
-      </div>
-      <div class="contato-item">
-        <div class="contato-icon">📅</div>
-        <div>
-          <div class="contato-label">Período letivo</div>
-          <div class="contato-val">Abril a Novembro<br>2026</div>
-        </div>
-      </div>
-    </div>
+    <div class="contato-grid" id="sobre-contato-grid"></div>
   </div>
 
   <footer>
@@ -750,6 +693,7 @@ footer strong{color:var(--folha);}
       <button class="tab-btn" onclick="tab('t-semana',this)">📅 Semana</button>
       <button class="tab-btn" onclick="tab('t-extra',this)">+ Extra</button>
       <button class="tab-btn" onclick="tab('t-mural',this)">📸 Mural</button>
+      <button class="tab-btn" onclick="tab('t-sobre',this)">🌺 Sobre</button>
       <button class="tab-btn" onclick="tab('t-info',this)">📢 Aviso</button>
     </div>
 
@@ -851,6 +795,115 @@ footer strong{color:var(--folha);}
       <button class="btn-save" id="btn-mural-pub" onclick="publicarMural()">Publicar no mural</button>
       <div class="status-msg" id="msg-mural"></div>
       <div id="lista-mural-admin" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- TAB: SOBRE NÓS -->
+    <div class="tab-pane" id="t-sobre">
+
+      <!-- HERO -->
+      <div class="sobre-admin-section">
+        <div class="sobre-admin-header" onclick="toggleSobreSection('sec-hero')">
+          <span>🏔️ Apresentação (hero)</span><span class="chevron" id="chev-sec-hero">▼</span>
+        </div>
+        <div class="sobre-admin-body" id="sec-hero">
+          <div class="hero-editor-field"><label>Tag (linha pequena acima do título)</label><input type="text" id="she-tag" placeholder="Ex: Projeto Cultural Indígena · Manaus/AM"></div>
+          <div class="hero-editor-field"><label>Título principal</label><input type="text" id="she-titulo" placeholder="Ex: Sobre o Projeto Rede de Saberes"></div>
+          <div class="hero-editor-field"><label>Subtítulo / descrição</label><textarea id="she-desc" placeholder="Texto introdutório da página…"></textarea></div>
+          <button class="btn-save" onclick="salvarHero()">Salvar apresentação</button>
+          <div class="status-msg" id="msg-she"></div>
+        </div>
+      </div>
+
+      <!-- HISTÓRIA -->
+      <div class="sobre-admin-section">
+        <div class="sobre-admin-header" onclick="toggleSobreSection('sec-historia')">
+          <span>📖 História</span><span class="chevron" id="chev-sec-historia">▼</span>
+        </div>
+        <div class="sobre-admin-body" id="sec-historia">
+          <div class="hero-editor-field"><label>Label (texto pequeno acima)</label><input type="text" id="sh-label" placeholder="Ex: Nossa história"></div>
+          <div class="hero-editor-field"><label>Título</label><input type="text" id="sh-titulo" placeholder="Ex: Raízes da Floresta Amazônica"></div>
+          <div class="hero-editor-field"><label>Parágrafos (um por linha)</label><textarea id="sh-paragrafos" placeholder="Parágrafo 1&#10;Parágrafo 2&#10;Parágrafo 3" style="min-height:110px;"></textarea></div>
+          <div class="hero-editor-field"><label>URL da foto lateral</label><input type="text" id="sh-foto" placeholder="https://…"></div>
+          <div class="hero-editor-field"><label>Badge (texto sobre a foto)</label><input type="text" id="sh-badge" placeholder="Ex: Desde 2026 · Manaus/AM"></div>
+          <button class="btn-save" onclick="salvarHistoria()">Salvar história</button>
+          <div class="status-msg" id="msg-sh"></div>
+        </div>
+      </div>
+
+      <!-- VALORES -->
+      <div class="sobre-admin-section">
+        <div class="sobre-admin-header" onclick="toggleSobreSection('sec-valores')">
+          <span>💎 Valores</span><span class="chevron" id="chev-sec-valores">▼</span>
+        </div>
+        <div class="sobre-admin-body" id="sec-valores">
+          <div id="lista-valores-admin"></div>
+          <button class="btn-add-sobre" onclick="abrirFormValor()">+ Adicionar valor</button>
+          <div class="sobre-mini-form" id="form-valor">
+            <div class="smf-row">
+              <div class="smf-field"><label>Ícone (emoji)</label><input type="text" id="fv-icone" placeholder="🌿" maxlength="4"></div>
+              <div class="smf-field"><label>Nome</label><input type="text" id="fv-nome" placeholder="Ex: Pertencimento"></div>
+            </div>
+            <div class="smf-field"><label>Descrição</label><textarea id="fv-desc" placeholder="Breve descrição do valor…"></textarea></div>
+            <input type="hidden" id="fv-idx" value="-1">
+            <div class="smf-actions">
+              <button class="btn-smf-save" onclick="salvarValor()">Salvar</button>
+              <button class="btn-smf-cancel" onclick="fecharFormValor()">Cancelar</button>
+            </div>
+          </div>
+          <div class="status-msg" id="msg-sv"></div>
+        </div>
+      </div>
+
+      <!-- EQUIPE -->
+      <div class="sobre-admin-section">
+        <div class="sobre-admin-header" onclick="toggleSobreSection('sec-equipe')">
+          <span>👥 Equipe</span><span class="chevron" id="chev-sec-equipe">▼</span>
+        </div>
+        <div class="sobre-admin-body" id="sec-equipe">
+          <div id="lista-equipe-admin"></div>
+          <button class="btn-add-sobre" onclick="abrirFormEquipe()">+ Adicionar membro</button>
+          <div class="sobre-mini-form" id="form-equipe">
+            <div class="smf-field"><label>Nome</label><input type="text" id="fe-nome" placeholder="Nome completo"></div>
+            <div class="smf-row">
+              <div class="smf-field"><label>Cargo / Função</label><input type="text" id="fe-cargo" placeholder="Ex: Professor de Música"></div>
+              <div class="smf-field"><label>Ícone (emoji, se sem foto)</label><input type="text" id="fe-icone" placeholder="🎵" maxlength="4"></div>
+            </div>
+            <div class="smf-field"><label>URL da foto (opcional)</label><input type="text" id="fe-foto" placeholder="https://…"></div>
+            <div class="smf-field"><label>Mini-bio</label><textarea id="fe-bio" placeholder="Breve descrição do membro…"></textarea></div>
+            <input type="hidden" id="fe-idx" value="-1">
+            <div class="smf-actions">
+              <button class="btn-smf-save" onclick="salvarMembroEquipe()">Salvar</button>
+              <button class="btn-smf-cancel" onclick="fecharFormEquipe()">Cancelar</button>
+            </div>
+          </div>
+          <div class="status-msg" id="msg-se"></div>
+        </div>
+      </div>
+
+      <!-- CONTATO -->
+      <div class="sobre-admin-section">
+        <div class="sobre-admin-header" onclick="toggleSobreSection('sec-contato')">
+          <span>📞 Contato</span><span class="chevron" id="chev-sec-contato">▼</span>
+        </div>
+        <div class="sobre-admin-body" id="sec-contato">
+          <div id="lista-contato-admin"></div>
+          <button class="btn-add-sobre" onclick="abrirFormContato()">+ Adicionar item de contato</button>
+          <div class="sobre-mini-form" id="form-contato">
+            <div class="smf-row">
+              <div class="smf-field"><label>Ícone (emoji)</label><input type="text" id="fc-icone" placeholder="📍" maxlength="4"></div>
+              <div class="smf-field"><label>Label</label><input type="text" id="fc-label" placeholder="Ex: Localização"></div>
+            </div>
+            <div class="smf-field"><label>Valor / Texto</label><textarea id="fc-val" placeholder="Ex: Manaus, Amazonas&#10;Região Norte – Brasil"></textarea></div>
+            <input type="hidden" id="fc-idx" value="-1">
+            <div class="smf-actions">
+              <button class="btn-smf-save" onclick="salvarContato()">Salvar</button>
+              <button class="btn-smf-cancel" onclick="fecharFormContato()">Cancelar</button>
+            </div>
+          </div>
+          <div class="status-msg" id="msg-sc"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- TAB: AVISO -->
@@ -1218,8 +1271,275 @@ function tab(id,btn){
   document.getElementById(id).classList.add('ativo');btn.classList.add('ativo');
   if(id==='t-semana')renderSemanaAdmin();
   if(id==='t-cert'){carregarProximoCodigo();renderListaCertsAdmin();}
+  if(id==='t-sobre')carregarAdminSobre();
 }
 function renderAdminData(){renderSemanaAdmin();renderListaExtras();renderListaMuralAdmin();carregarProximoCodigo();renderListaCertsAdmin();}
+
+// ═══════════════════════════════════════════════
+// SOBRE NÓS — DADOS PADRÃO
+// ═══════════════════════════════════════════════
+const SOBRE_DEFAULT = {
+  hero:{tag:'Projeto Cultural Indígena · Manaus/AM',titulo:'Sobre o Projeto Rede de Saberes',desc:'Preservando a língua, a cultura e os saberes ancestrais do povo Kokama através da educação comunitária e da arte.'},
+  historia:{label:'Nossa história',titulo:'Raízes da Floresta Amazônica',paragrafos:['O povo Kokama é um dos povos indígenas da Amazônia com rica tradição oral, artística e culinária. A Rede de Saberes nasceu da necessidade de fortalecer a identidade cultural Kokama entre as novas gerações.','Por meio de aulas semanais de Informática, Costura, Música, Culinária e Artesanato, o projeto conecta anciãos e jovens, transmitindo conhecimentos que atravessam séculos.','O Ajuri — prática coletiva de trabalho comunitário — é o espírito que guia cada encontro: a força está na união e no compartilhar.'],foto:'https://placehold.co/600x380/1a3d1a/6dcf6d?text=Povo+Kokama',badge:'Desde 2026 · Manaus/AM'},
+  valores:[{icone:'🌿',nome:'Pertencimento',desc:'Fortalecer a identidade Kokama e o orgulho de nossas origens amazônicas.'},{icone:'🤝',nome:'Ajuri',desc:'O trabalho coletivo e solidário como força que move a comunidade.'},{icone:'📚',nome:'Educação',desc:'Integrar saberes tradicionais com habilidades contemporâneas.'},{icone:'🎨',nome:'Expressão',desc:'A arte, a música e o artesanato como vozes vivas da cultura Kokama.'},{icone:'🌺',nome:'Ancestralidade',desc:'Honrar os mais velhos e preservar o conhecimento da floresta.'},{icone:'🌱',nome:'Futuro',desc:'Semear hoje para que as próximas gerações floresçam com raízes firmes.'}],
+  equipe:[{nome:'Coordenação Geral',cargo:'Liderança do Projeto',icone:'🌿',foto:'',bio:'Responsável pela articulação das atividades e pela relação com a comunidade Kokama.'},{nome:'Educador de Música',cargo:'Professor de Música',icone:'🎵',foto:'',bio:'Transmite cantos e ritmos tradicionais Kokama com instrumentos da floresta.'},{nome:'Mestra Artesã',cargo:'Professora de Costura e Artesanato',icone:'🧵',foto:'',bio:'Guardiã dos padrões e técnicas têxteis ancestrais do povo Kokama.'},{nome:'Mestra Culinária',cargo:'Professora de Culinária',icone:'🍲',foto:'',bio:'Preserva receitas e técnicas de preparo de alimentos tradicionais da Amazônia.'}],
+  contato:[{icone:'📍',label:'Localização',val:'Manaus, Amazonas\nRegião Norte – Brasil'},{icone:'📧',label:'E-mail',val:'rededesaberes.kokama@email.com'},{icone:'📱',label:'WhatsApp / Telefone',val:'(92) 99999-0000'},{icone:'📅',label:'Período letivo',val:'Abril a Novembro\n2026'}]
+};
+
+// ── Carrega dados do servidor ──
+async function carregarSobre(){
+  try{
+    const r=await fetch(`${APPS_SCRIPT_URL}?action=getSobre`);
+    const d=await r.json();
+    const dados = d.ok && d.sobre ? d.sobre : SOBRE_DEFAULT;
+    renderSobre(dados);
+    return dados;
+  }catch{
+    renderSobre(SOBRE_DEFAULT);
+    return SOBRE_DEFAULT;
+  }
+}
+
+// ── Salva dados no servidor ──
+async function salvarSobreServidor(dados, msgEl){
+  if(msgEl){msgEl.textContent='Salvando…';msgEl.className='status-msg';}
+  try{
+    const r=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'setSobre',senha:'KOKAMA2026',sobre:dados})});
+    const d=await r.json();
+    if(d.ok){
+      if(msgEl){msgEl.textContent='✅ Salvo e publicado!';msgEl.className='status-msg ok';}
+      carregarSobre(); // re-renderiza página pública
+    } else throw new Error(d.erro||'Erro');
+  }catch(e){
+    if(msgEl){msgEl.textContent='❌ '+e.message;msgEl.className='status-msg err';}
+  }
+}
+
+// ── Cache local dos dados atuais ──
+let sobreAtual = {...SOBRE_DEFAULT};
+
+// ── RENDER PÚBLICO COMPLETO ──
+function renderSobre(d){
+  sobreAtual = d;
+  // Hero
+  const tag=document.getElementById('sobre-hero-tag');
+  const tit=document.getElementById('sobre-hero-titulo');
+  const desc=document.getElementById('sobre-hero-desc');
+  if(tag)tag.textContent=d.hero?.tag||'';
+  if(tit)tit.innerHTML=(d.hero?.titulo||'').replace(/\n/g,'<br>');
+  if(desc)desc.textContent=d.hero?.desc||'';
+  // História
+  const hfoto=document.getElementById('sobre-historia-foto');
+  const hbadge=document.getElementById('sobre-historia-badge');
+  const hlabel=document.getElementById('sobre-historia-label');
+  const htitulo=document.getElementById('sobre-historia-titulo');
+  const hparas=document.getElementById('sobre-historia-paragrafos');
+  if(hfoto&&d.historia?.foto)hfoto.src=d.historia.foto;
+  if(hbadge)hbadge.textContent=d.historia?.badge||'';
+  if(hlabel)hlabel.textContent=d.historia?.label||'';
+  if(htitulo)htitulo.textContent=d.historia?.titulo||'';
+  if(hparas)hparas.innerHTML=(d.historia?.paragrafos||[]).map(p=>`<p style="color:var(--txt2);font-size:.9rem;line-height:1.8;margin-bottom:14px;">${p}</p>`).join('');
+  // Valores
+  const vg=document.getElementById('sobre-valores-grid');
+  if(vg)vg.innerHTML=(d.valores||[]).map(v=>`<div class="valor-card"><div class="valor-icon">${v.icone}</div><div class="valor-nome">${v.nome}</div><div class="valor-desc">${v.desc}</div></div>`).join('');
+  // Equipe
+  const eg=document.getElementById('sobre-equipe-grid');
+  if(eg)eg.innerHTML=(d.equipe||[]).map(m=>`<div class="equipe-card">${m.foto?`<img class="equipe-foto" src="${m.foto}" alt="${m.nome}">` :`<div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;font-size:2.8rem;">${m.icone||'👤'}</div>`}<div class="equipe-info"><div class="equipe-nome">${m.nome}</div><div class="equipe-cargo">${m.cargo}</div><div class="equipe-bio">${m.bio}</div></div></div>`).join('');
+  // Contato
+  const cg=document.getElementById('sobre-contato-grid');
+  if(cg)cg.innerHTML=(d.contato||[]).map(c=>`<div class="contato-item"><div class="contato-icon">${c.icone}</div><div><div class="contato-label">${c.label}</div><div class="contato-val">${(c.val||'').replace(/\n/g,'<br>')}</div></div></div>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// ADMIN — accordion
+// ─────────────────────────────────────────────
+function toggleSobreSection(id){
+  const body=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
+  const aberto=body.classList.toggle('aberto');
+  if(chev)chev.textContent=aberto?'▲':'▼';
+}
+
+// ─────────────────────────────────────────────
+// ADMIN — preenche forms ao abrir tab Sobre
+// ─────────────────────────────────────────────
+function carregarAdminSobre(){
+  const d=sobreAtual;
+  // hero
+  const el=id=>document.getElementById(id);
+  el('she-tag').value=d.hero?.tag||'';
+  el('she-titulo').value=d.hero?.titulo||'';
+  el('she-desc').value=d.hero?.desc||'';
+  // história
+  el('sh-label').value=d.historia?.label||'';
+  el('sh-titulo').value=d.historia?.titulo||'';
+  el('sh-paragrafos').value=(d.historia?.paragrafos||[]).join('\n');
+  el('sh-foto').value=d.historia?.foto||'';
+  el('sh-badge').value=d.historia?.badge||'';
+  // listas
+  renderAdminValores();renderAdminEquipe();renderAdminContato();
+}
+
+// ─────────────────────────────────────────────
+// HERO — salvar
+// ─────────────────────────────────────────────
+async function salvarHero(){
+  sobreAtual.hero={
+    tag:document.getElementById('she-tag').value.trim(),
+    titulo:document.getElementById('she-titulo').value.trim(),
+    desc:document.getElementById('she-desc').value.trim()
+  };
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-she'));
+}
+
+// ─────────────────────────────────────────────
+// HISTÓRIA — salvar
+// ─────────────────────────────────────────────
+async function salvarHistoria(){
+  const paras=document.getElementById('sh-paragrafos').value.split('\n').map(p=>p.trim()).filter(Boolean);
+  sobreAtual.historia={
+    label:document.getElementById('sh-label').value.trim(),
+    titulo:document.getElementById('sh-titulo').value.trim(),
+    paragrafos:paras,
+    foto:document.getElementById('sh-foto').value.trim(),
+    badge:document.getElementById('sh-badge').value.trim()
+  };
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-sh'));
+}
+
+// ─────────────────────────────────────────────
+// VALORES — CRUD
+// ─────────────────────────────────────────────
+function renderAdminValores(){
+  const el=document.getElementById('lista-valores-admin');
+  const arr=sobreAtual.valores||[];
+  el.innerHTML=arr.length?arr.map((v,i)=>`
+    <div class="sobre-item-row">
+      <div class="sobre-item-preview">
+        <div class="sip-title">${v.icone} ${v.nome}</div>
+        <div class="sip-sub">${v.desc}</div>
+      </div>
+      <div class="sobre-item-actions">
+        <button class="btn-edit-item" onclick="editarValor(${i})">✏️</button>
+        <button class="btn-del-item" onclick="deletarValor(${i})">✕</button>
+      </div>
+    </div>`).join(''):'<div style="color:var(--txt3);font-size:.8rem;margin-bottom:8px;">Nenhum valor cadastrado.</div>';
+}
+function abrirFormValor(idx=-1){
+  document.getElementById('fv-idx').value=idx;
+  if(idx>=0){const v=sobreAtual.valores[idx];document.getElementById('fv-icone').value=v.icone||'';document.getElementById('fv-nome').value=v.nome||'';document.getElementById('fv-desc').value=v.desc||'';}
+  else{document.getElementById('fv-icone').value='';document.getElementById('fv-nome').value='';document.getElementById('fv-desc').value='';}
+  document.getElementById('form-valor').classList.add('aberto');
+}
+function fecharFormValor(){document.getElementById('form-valor').classList.remove('aberto');}
+function editarValor(i){abrirFormValor(i);}
+async function deletarValor(i){
+  if(!confirm('Remover este valor?'))return;
+  sobreAtual.valores.splice(i,1);
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-sv'));
+  renderAdminValores();
+}
+async function salvarValor(){
+  const icone=document.getElementById('fv-icone').value.trim()||'🌿';
+  const nome=document.getElementById('fv-nome').value.trim();
+  const desc=document.getElementById('fv-desc').value.trim();
+  if(!nome){document.getElementById('msg-sv').textContent='Informe o nome.';document.getElementById('msg-sv').className='status-msg err';return;}
+  const idx=parseInt(document.getElementById('fv-idx').value);
+  if(!sobreAtual.valores)sobreAtual.valores=[];
+  if(idx>=0)sobreAtual.valores[idx]={icone,nome,desc};
+  else sobreAtual.valores.push({icone,nome,desc});
+  fecharFormValor();
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-sv'));
+  renderAdminValores();
+}
+
+// ─────────────────────────────────────────────
+// EQUIPE — CRUD
+// ─────────────────────────────────────────────
+function renderAdminEquipe(){
+  const el=document.getElementById('lista-equipe-admin');
+  const arr=sobreAtual.equipe||[];
+  el.innerHTML=arr.length?arr.map((m,i)=>`
+    <div class="sobre-item-row">
+      <div class="sobre-item-preview">
+        <div class="sip-title">${m.icone||'👤'} ${m.nome}</div>
+        <div class="sip-sub">${m.cargo}</div>
+      </div>
+      <div class="sobre-item-actions">
+        <button class="btn-edit-item" onclick="editarMembro(${i})">✏️</button>
+        <button class="btn-del-item" onclick="deletarMembro(${i})">✕</button>
+      </div>
+    </div>`).join(''):'<div style="color:var(--txt3);font-size:.8rem;margin-bottom:8px;">Nenhum membro cadastrado.</div>';
+}
+function abrirFormEquipe(idx=-1){
+  document.getElementById('fe-idx').value=idx;
+  if(idx>=0){const m=sobreAtual.equipe[idx];document.getElementById('fe-nome').value=m.nome||'';document.getElementById('fe-cargo').value=m.cargo||'';document.getElementById('fe-icone').value=m.icone||'';document.getElementById('fe-foto').value=m.foto||'';document.getElementById('fe-bio').value=m.bio||'';}
+  else{['fe-nome','fe-cargo','fe-foto','fe-bio'].forEach(id=>document.getElementById(id).value='');document.getElementById('fe-icone').value='';}
+  document.getElementById('form-equipe').classList.add('aberto');
+}
+function fecharFormEquipe(){document.getElementById('form-equipe').classList.remove('aberto');}
+function editarMembro(i){abrirFormEquipe(i);}
+async function deletarMembro(i){
+  if(!confirm('Remover este membro?'))return;
+  sobreAtual.equipe.splice(i,1);
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-se'));
+  renderAdminEquipe();
+}
+async function salvarMembroEquipe(){
+  const nome=document.getElementById('fe-nome').value.trim();
+  if(!nome){document.getElementById('msg-se').textContent='Informe o nome.';document.getElementById('msg-se').className='status-msg err';return;}
+  const membro={nome,cargo:document.getElementById('fe-cargo').value.trim(),icone:document.getElementById('fe-icone').value.trim()||'👤',foto:document.getElementById('fe-foto').value.trim(),bio:document.getElementById('fe-bio').value.trim()};
+  const idx=parseInt(document.getElementById('fe-idx').value);
+  if(!sobreAtual.equipe)sobreAtual.equipe=[];
+  if(idx>=0)sobreAtual.equipe[idx]=membro;else sobreAtual.equipe.push(membro);
+  fecharFormEquipe();
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-se'));
+  renderAdminEquipe();
+}
+
+// ─────────────────────────────────────────────
+// CONTATO — CRUD
+// ─────────────────────────────────────────────
+function renderAdminContato(){
+  const el=document.getElementById('lista-contato-admin');
+  const arr=sobreAtual.contato||[];
+  el.innerHTML=arr.length?arr.map((c,i)=>`
+    <div class="sobre-item-row">
+      <div class="sobre-item-preview">
+        <div class="sip-title">${c.icone} ${c.label}</div>
+        <div class="sip-sub">${(c.val||'').replace(/\n/g,' · ')}</div>
+      </div>
+      <div class="sobre-item-actions">
+        <button class="btn-edit-item" onclick="editarContato(${i})">✏️</button>
+        <button class="btn-del-item" onclick="deletarContato(${i})">✕</button>
+      </div>
+    </div>`).join(''):'<div style="color:var(--txt3);font-size:.8rem;margin-bottom:8px;">Nenhum item de contato.</div>';
+}
+function abrirFormContato(idx=-1){
+  document.getElementById('fc-idx').value=idx;
+  if(idx>=0){const c=sobreAtual.contato[idx];document.getElementById('fc-icone').value=c.icone||'';document.getElementById('fc-label').value=c.label||'';document.getElementById('fc-val').value=c.val||'';}
+  else{['fc-icone','fc-label','fc-val'].forEach(id=>document.getElementById(id).value='');}
+  document.getElementById('form-contato').classList.add('aberto');
+}
+function fecharFormContato(){document.getElementById('form-contato').classList.remove('aberto');}
+function editarContato(i){abrirFormContato(i);}
+async function deletarContato(i){
+  if(!confirm('Remover este item de contato?'))return;
+  sobreAtual.contato.splice(i,1);
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-sc'));
+  renderAdminContato();
+}
+async function salvarContato(){
+  const label=document.getElementById('fc-label').value.trim();
+  if(!label){document.getElementById('msg-sc').textContent='Informe o label.';document.getElementById('msg-sc').className='status-msg err';return;}
+  const item={icone:document.getElementById('fc-icone').value.trim()||'📌',label,val:document.getElementById('fc-val').value.trim()};
+  const idx=parseInt(document.getElementById('fc-idx').value);
+  if(!sobreAtual.contato)sobreAtual.contato=[];
+  if(idx>=0)sobreAtual.contato[idx]=item;else sobreAtual.contato.push(item);
+  fecharFormContato();
+  await salvarSobreServidor(sobreAtual,document.getElementById('msg-sc'));
+  renderAdminContato();
+}
 
 // ═══════════════════════════════════════════════
 // CERTIFICADOS — GERAÇÃO DE CÓDIGO
@@ -1603,7 +1923,7 @@ document.addEventListener('click',e=>{
 });
 
 // INIT
-renderSemana();renderCal();renderMural();
+renderSemana();renderCal();renderMural();carregarSobre();
 </script>
 </body>
 </html>
