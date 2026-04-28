@@ -155,17 +155,89 @@ section.cal-section{position:relative;z-index:1;padding:60px 24px;}
 .count-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--ouro);line-height:1;}
 .count-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--txt3);margin-top:3px;}
 
-/* MURAL */
-.mural-scroll{display:flex;gap:18px;overflow-x:auto;padding:8px 4px 20px;scrollbar-width:thin;scrollbar-color:var(--verde) transparent;}
-.mural-card{position:relative;min-width:280px;height:200px;border-radius:20px;overflow:hidden;flex-shrink:0;cursor:pointer;border:1px solid var(--border);transition:.4s;}
-.mural-card:hover{transform:scale(1.03) translateY(-4px);}
-.mural-card img{width:100%;height:100%;object-fit:cover;transition:.6s;}
-.mural-card:hover img{transform:scale(1.08);}
-.mural-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,transparent 60%);}
-.mural-info{position:absolute;bottom:0;left:0;right:0;padding:18px 16px;}
-.mural-tag{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);font-weight:700;margin-bottom:5px;display:inline-block;background:rgba(245,197,24,.15);padding:2px 8px;border-radius:4px;}
-.mural-title{font-size:.95rem;font-weight:700;color:#fff;line-height:1.3;}
-.mural-desc{font-size:.75rem;color:rgba(255,255,255,.7);line-height:1.4;margin-top:3px;}
+/* MURAL PÚBLICO — grid masonry-like */
+.mural-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;max-width:1200px;margin:0 auto;
+}
+.mural-card{position:relative;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:.4s;background:#000;}
+.mural-card:hover{transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,.5);border-color:rgba(109,207,109,.35);}
+.mural-card img{width:100%;display:block;object-fit:cover;max-height:320px;transition:.6s;}
+.mural-card:hover img{transform:scale(1.04);}
+.mural-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.2) 55%,transparent 100%);}
+.mural-info{position:absolute;bottom:0;left:0;right:0;padding:20px 18px;}
+.mural-tag{font-size:.6rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ouro);font-weight:700;margin-bottom:6px;display:inline-block;background:rgba(245,197,24,.15);padding:2px 9px;border-radius:4px;border:1px solid rgba(245,197,24,.2);}
+.mural-title{font-size:1rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:4px;}
+.mural-desc{font-size:.8rem;color:rgba(255,255,255,.72);line-height:1.5;}
+.mural-meta{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:6px;}
+/* lightbox */
+#lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);backdrop-filter:blur(16px);align-items:center;justify-content:center;flex-direction:column;padding:24px;}
+#lightbox.ativo{display:flex;}
+#lightbox img{max-width:min(860px,92vw);max-height:70vh;border-radius:14px;object-fit:contain;box-shadow:0 30px 80px rgba(0,0,0,.8);}
+#lb-titulo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--txt);margin-top:20px;text-align:center;}
+#lb-desc{font-size:.88rem;color:var(--txt2);margin-top:6px;text-align:center;max-width:560px;line-height:1.6;}
+#lb-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--txt2);width:36px;height:36px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+#lb-close:hover{background:rgba(255,80,80,.15);color:#ff7777;}
+/* upload mural admin */
+.mural-upload-zone{border:2px dashed rgba(109,207,109,.3);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:.3s;margin-bottom:14px;position:relative;}
+.mural-upload-zone:hover,.mural-upload-zone.drag{border-color:var(--verde-claro);background:rgba(74,170,74,.05);}
+.mural-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.mural-upload-preview{width:100%;border-radius:10px;margin-bottom:10px;max-height:180px;object-fit:contain;background:#000;display:none;}
+
+/* ══ SOBRE NÓS ══ */
+#page-sobre{background:var(--g1);}
+.sobre-hero{text-align:center;padding:80px 24px 60px;background:linear-gradient(180deg,rgba(15,45,15,.7) 0%,transparent 100%);position:relative;overflow:hidden;}
+.sobre-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(74,170,74,.12),transparent);}
+.sobre-hero-tag{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--ouro);font-weight:700;margin-bottom:12px;position:relative;}
+.sobre-hero h2{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);font-weight:900;line-height:1.05;position:relative;background:linear-gradient(135deg,#fff 0%,var(--folha) 60%,var(--ouro) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sobre-hero p{color:var(--txt2);font-size:.95rem;max-width:520px;margin:14px auto 0;line-height:1.75;position:relative;}
+
+.sobre-section{padding:64px 24px;max-width:1100px;margin:0 auto;}
+.sobre-section.alt{background:rgba(0,0,0,.15);max-width:100%;padding:64px 24px;}
+.sobre-section.alt .sobre-inner{max-width:1100px;margin:0 auto;}
+
+/* história */
+.historia-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+@media(max-width:700px){.historia-grid{grid-template-columns:1fr;}}
+.historia-img-wrap{position:relative;}
+.historia-img-wrap img{width:100%;border-radius:20px;border:1px solid var(--border);object-fit:cover;max-height:360px;}
+.historia-img-badge{position:absolute;bottom:-16px;right:-16px;background:linear-gradient(135deg,var(--verde),var(--verde-claro));color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:10px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(74,170,74,.4);}
+.historia-txt .hs-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--ouro);font-weight:700;margin-bottom:10px;}
+.historia-txt h3{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;color:var(--txt);margin-bottom:16px;line-height:1.2;}
+.historia-txt p{color:var(--txt2);font-size:.9rem;line-height:1.8;margin-bottom:14px;}
+
+/* valores */
+.valores-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:40px;}
+.valor-card{background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:24px 20px;transition:.3s;}
+.valor-card:hover{border-color:rgba(109,207,109,.35);transform:translateY(-4px);}
+.valor-icon{font-size:2rem;margin-bottom:12px;}
+.valor-nome{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ouro);margin-bottom:6px;}
+.valor-desc{font-size:.82rem;color:var(--txt2);line-height:1.6;}
+
+/* equipe */
+.equipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;margin-top:40px;}
+.equipe-card{background:var(--glass);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:.35s;}
+.equipe-card:hover{border-color:rgba(109,207,109,.4);transform:translateY(-5px);}
+.equipe-foto{width:100%;height:180px;object-fit:cover;background:var(--g3);display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.equipe-foto img{width:100%;height:100%;object-fit:cover;}
+.equipe-info{padding:18px;}
+.equipe-nome{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--txt);margin-bottom:3px;}
+.equipe-cargo{font-size:.75rem;color:var(--ouro);font-weight:600;letter-spacing:.04em;}
+.equipe-bio{font-size:.78rem;color:var(--txt2);margin-top:8px;line-height:1.55;}
+
+/* galeria sobre */
+.galeria-sobre{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:32px;}
+.galeria-sobre img{width:100%;height:180px;object-fit:cover;border-radius:14px;border:1px solid var(--border);transition:.3s;cursor:pointer;}
+.galeria-sobre img:hover{transform:scale(1.03);border-color:rgba(109,207,109,.4);}
+
+/* contato */
+.contato-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px;}
+.contato-item{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:22px 18px;display:flex;align-items:flex-start;gap:14px;transition:.3s;}
+.contato-item:hover{border-color:rgba(109,207,109,.3);transform:translateY(-3px);}
+.contato-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+.contato-label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px;}
+.contato-val{font-size:.88rem;color:var(--txt);font-weight:500;line-height:1.5;}
 
 /* ══════════════════════════════
    PÁGINA: CERTIFICADOS
@@ -314,6 +386,7 @@ footer strong{color:var(--folha);}
 <nav id="nav-tabs">
   <button class="nav-tab ativo" onclick="irPara('page-cal',this)">🌿 Calendário</button>
   <button class="nav-tab" onclick="irPara('page-cert',this)">📜 Certificados</button>
+  <button class="nav-tab" onclick="irPara('page-sobre',this)">🌺 Sobre Nós</button>
   <div class="nav-spacer"></div>
   <button id="btn-music" onclick="toggleMusic()">
     <span class="music-dot" id="music-dot"></span>
@@ -406,14 +479,20 @@ footer strong{color:var(--folha);}
     <div class="sec-head">
       <span class="sec-label">Mural</span>
       <h2 class="sec-title">Registros & Novidades</h2>
-      <p class="sec-desc">Fotos e informativos do projeto</p>
+      <p class="sec-desc">Fotos, mensagens e informativos do projeto publicados pela equipe</p>
     </div>
-    <div style="max-width:1200px;margin:0 auto;">
-      <div class="mural-scroll" id="mural-scroll">
-        <div style="color:var(--txt3);padding:40px;font-style:italic;font-size:.9rem;">Nenhuma publicação ainda.</div>
-      </div>
+    <div id="mural-grid" class="mural-grid">
+      <div style="color:var(--txt3);padding:40px;font-style:italic;font-size:.9rem;grid-column:1/-1;text-align:center;">Nenhuma publicação ainda.</div>
     </div>
   </section>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" onclick="if(event.target===this)fecharLightbox()">
+    <button id="lb-close" onclick="fecharLightbox()">✕</button>
+    <img id="lb-img" src="" alt="">
+    <div id="lb-titulo"></div>
+    <div id="lb-desc"></div>
+  </div>
 
   <footer>
     <strong>Projeto Rede de Saberes 2026</strong><br>
@@ -466,6 +545,181 @@ footer strong{color:var(--folha);}
       <div class="resultado-wrap" id="resultado-wrap"></div>
     </div>
   </div>
+</div>
+
+<!-- ════════════════════════════
+     PÁGINA: SOBRE NÓS
+════════════════════════════ -->
+<div class="page" id="page-sobre">
+
+  <div class="sobre-hero">
+    <div class="sobre-hero-tag">Projeto Cultural Indígena · Manaus/AM</div>
+    <h2>Sobre o Projeto<br>Rede de Saberes</h2>
+    <p>Preservando a língua, a cultura e os saberes ancestrais do povo Kokama através da educação comunitária e da arte.</p>
+  </div>
+
+  <!-- HISTÓRIA -->
+  <div class="sobre-section">
+    <div class="historia-grid">
+      <div class="historia-img-wrap">
+        <img src="https://placehold.co/600x380/1a3d1a/6dcf6d?text=Povo+Kokama" alt="Povo Kokama" id="sobre-foto-principal">
+        <div class="historia-img-badge">Desde 2026 · Manaus/AM</div>
+      </div>
+      <div class="historia-txt">
+        <div class="hs-label">Nossa história</div>
+        <h3>Raízes da Floresta Amazônica</h3>
+        <p>O povo Kokama é um dos povos indígenas da Amazônia com rica tradição oral, artística e culinária. A <strong>Rede de Saberes</strong> nasceu da necessidade de fortalecer a identidade cultural Kokama entre as novas gerações.</p>
+        <p>Por meio de aulas semanais de Informática, Costura, Música, Culinária e Artesanato, o projeto conecta anciãos e jovens, transmitindo conhecimentos que atravessam séculos.</p>
+        <p>O Ajuri — prática coletiva de trabalho comunitário — é o espírito que guia cada encontro: a força está na união e no compartilhar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALORES -->
+  <div class="sobre-section alt">
+    <div class="sobre-inner">
+      <div class="sec-head" style="margin-bottom:0;">
+        <span class="sec-label">O que nos guia</span>
+        <h2 class="sec-title">Nossos valores</h2>
+        <p class="sec-desc">Princípios que sustentam cada aula, cada encontro, cada sabedoria partilhada</p>
+      </div>
+      <div class="valores-grid">
+        <div class="valor-card">
+          <div class="valor-icon">🌿</div>
+          <div class="valor-nome">Pertencimento</div>
+          <div class="valor-desc">Fortalecer a identidade Kokama e o orgulho de nossas origens amazônicas.</div>
+        </div>
+        <div class="valor-card">
+          <div class="valor-icon">🤝</div>
+          <div class="valor-nome">Ajuri</div>
+          <div class="valor-desc">O trabalho coletivo e solidário como força que move a comunidade.</div>
+        </div>
+        <div class="valor-card">
+          <div class="valor-icon">📚</div>
+          <div class="valor-nome">Educação</div>
+          <div class="valor-desc">Integrar saberes tradicionais com habilidades contemporâneas para o futuro.</div>
+        </div>
+        <div class="valor-card">
+          <div class="valor-icon">🎨</div>
+          <div class="valor-nome">Expressão</div>
+          <div class="valor-desc">A arte, a música e o artesanato como vozes vivas da cultura Kokama.</div>
+        </div>
+        <div class="valor-card">
+          <div class="valor-icon">🌺</div>
+          <div class="valor-nome">Ancestralidade</div>
+          <div class="valor-desc">Honrar os mais velhos e preservar o conhecimento que vem da floresta.</div>
+        </div>
+        <div class="valor-card">
+          <div class="valor-icon">🌱</div>
+          <div class="valor-nome">Futuro</div>
+          <div class="valor-desc">Semear hoje para que as próximas gerações floresçam com raízes firmes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EQUIPE -->
+  <div class="sobre-section">
+    <div class="sec-head" style="margin-bottom:0;">
+      <span class="sec-label">Quem faz acontecer</span>
+      <h2 class="sec-title">Nossa equipe</h2>
+      <p class="sec-desc">Educadores, lideranças comunitárias e parceiros que dedicam seu tempo e saber ao projeto</p>
+    </div>
+    <div class="equipe-grid" id="equipe-grid">
+      <!-- cards gerados pelo admin ou estáticos abaixo -->
+      <div class="equipe-card">
+        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🌿</div>
+        <div class="equipe-info">
+          <div class="equipe-nome">Coordenação Geral</div>
+          <div class="equipe-cargo">Liderança do Projeto</div>
+          <div class="equipe-bio">Responsável pela articulação das atividades e pela relação com a comunidade Kokama.</div>
+        </div>
+      </div>
+      <div class="equipe-card">
+        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🎵</div>
+        <div class="equipe-info">
+          <div class="equipe-nome">Educador de Música</div>
+          <div class="equipe-cargo">Professor de Música</div>
+          <div class="equipe-bio">Transmite cantos e ritmos tradicionais Kokama com instrumentos da floresta.</div>
+        </div>
+      </div>
+      <div class="equipe-card">
+        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🧵</div>
+        <div class="equipe-info">
+          <div class="equipe-nome">Mestra Artesã</div>
+          <div class="equipe-cargo">Professora de Costura e Artesanato</div>
+          <div class="equipe-bio">Guardiã dos padrões e técnicas têxteis ancestrais do povo Kokama.</div>
+        </div>
+      </div>
+      <div class="equipe-card">
+        <div class="equipe-foto" style="background:var(--g3);display:flex;align-items:center;justify-content:center;height:180px;">🍲</div>
+        <div class="equipe-info">
+          <div class="equipe-nome">Mestra Culinária</div>
+          <div class="equipe-cargo">Professora de Culinária</div>
+          <div class="equipe-bio">Preserva receitas e técnicas de preparo de alimentos tradicionais da Amazônia.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALERIA DO PROJETO -->
+  <div class="sobre-section alt">
+    <div class="sobre-inner">
+      <div class="sec-head" style="margin-bottom:0;">
+        <span class="sec-label">Em imagens</span>
+        <h2 class="sec-title">Galeria do projeto</h2>
+        <p class="sec-desc">Momentos registrados nas aulas, encontros e celebrações da comunidade</p>
+      </div>
+      <div class="galeria-sobre" id="galeria-sobre">
+        <div style="color:var(--txt3);font-size:.88rem;font-style:italic;padding:32px 0;grid-column:1/-1;text-align:center;">As fotos do mural aparecerão aqui automaticamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTATO -->
+  <div class="sobre-section">
+    <div class="sec-head" style="margin-bottom:0;">
+      <span class="sec-label">Fale conosco</span>
+      <h2 class="sec-title">Contato</h2>
+      <p class="sec-desc">Entre em contato com a equipe do projeto Rede de Saberes Kokama</p>
+    </div>
+    <div class="contato-grid">
+      <div class="contato-item">
+        <div class="contato-icon">📍</div>
+        <div>
+          <div class="contato-label">Localização</div>
+          <div class="contato-val">Manaus, Amazonas<br>Região Norte – Brasil</div>
+        </div>
+      </div>
+      <div class="contato-item">
+        <div class="contato-icon">📧</div>
+        <div>
+          <div class="contato-label">E-mail</div>
+          <div class="contato-val">rededesaberes<br>kokama@email.com</div>
+        </div>
+      </div>
+      <div class="contato-item">
+        <div class="contato-icon">📱</div>
+        <div>
+          <div class="contato-label">WhatsApp / Telefone</div>
+          <div class="contato-val">(92) 99999-0000</div>
+        </div>
+      </div>
+      <div class="contato-item">
+        <div class="contato-icon">📅</div>
+        <div>
+          <div class="contato-label">Período letivo</div>
+          <div class="contato-val">Abril a Novembro<br>2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Projeto Rede de Saberes 2026</strong><br>
+    Cultura Kokama · Preservação · Educação Indígena<br>
+    <span style="font-size:.7rem;opacity:.5;">Desenvolvido com 🌿 para a comunidade</span>
+  </footer>
 </div>
 
 <!-- ════════════════════════
@@ -580,10 +834,21 @@ footer strong{color:var(--folha);}
 
     <!-- TAB: MURAL -->
     <div class="tab-pane" id="t-mural">
-      <div class="form-group"><label>URL da imagem</label><input type="text" id="m-url" placeholder="https://…"></div>
-      <div class="form-group"><label>Título</label><input type="text" id="m-titulo"></div>
-      <div class="form-group"><label>Legenda</label><textarea id="m-legenda" placeholder="Descrição da foto…"></textarea></div>
-      <button class="btn-save" onclick="salvarMural()">Publicar no mural</button>
+      <div class="mural-upload-zone" id="mural-upload-zone">
+        <input type="file" id="m-arquivo" accept="image/*" onchange="previewMural(this)">
+        <div class="uz-icon">🖼️</div>
+        <div class="uz-txt">Clique ou arraste a foto aqui</div>
+        <div class="uz-sub">JPG ou PNG · máx. 8MB</div>
+      </div>
+      <img id="mural-upload-preview" class="mural-upload-preview" alt="Preview">
+      <div class="form-group"><label>Título</label><input type="text" id="m-titulo" placeholder="Ex: Aula de Costura – Abril"></div>
+      <div class="form-group"><label>Descrição / Mensagem</label><textarea id="m-legenda" placeholder="Escreva uma mensagem, legenda ou informativo sobre a foto…" style="min-height:90px;"></textarea></div>
+      <div class="form-group"><label>Tag (opcional)</label><input type="text" id="m-tag" placeholder="Ex: Artesanato, Culinária, Evento…"></div>
+      <div class="progress-wrap" id="mural-progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="mural-progress-fill"></div></div>
+        <div class="progress-txt" id="mural-progress-txt">Enviando…</div>
+      </div>
+      <button class="btn-save" id="btn-mural-pub" onclick="publicarMural()">Publicar no mural</button>
       <div class="status-msg" id="msg-mural"></div>
       <div id="lista-mural-admin" style="margin-top:14px;"></div>
     </div>
@@ -794,12 +1059,139 @@ function abrirDia(dia,mes,ano){
 }
 
 // ═══════════════════════════════════════════════
-// MURAL
+// MURAL — RENDER PÚBLICO (grid + lightbox)
 // ═══════════════════════════════════════════════
 function renderMural(){
-  const s=document.getElementById('mural-scroll'),f=ls('mural-fotos');
-  if(!f.length){s.innerHTML='<div style="color:var(--txt3);padding:40px;font-style:italic;">Nenhuma publicação ainda.</div>';return;}
-  s.innerHTML=f.map(x=>`<div class="mural-card"><img src="${x.url}" alt="${x.titulo}" onerror="this.src='https://placehold.co/280x200/1a3d1a/6dcf6d?text=Foto'"><div class="mural-overlay"></div><div class="mural-info"><div class="mural-tag">Mural</div><div class="mural-title">${x.titulo}</div>${x.legenda?`<div class="mural-desc">${x.legenda}</div>`:''}</div></div>`).join('');
+  const grid=document.getElementById('mural-grid');
+  const fotos=ls('mural-fotos');
+  if(!fotos.length){
+    grid.innerHTML='<div style="color:var(--txt3);padding:40px;font-style:italic;font-size:.9rem;grid-column:1/-1;text-align:center;">Nenhuma publicação ainda.</div>';
+    renderGaleriaSobre([]);
+    return;
+  }
+  grid.innerHTML=fotos.map((f,i)=>`
+    <div class="mural-card" onclick="abrirLightbox(${i})">
+      <img src="${f.url}" alt="${f.titulo}" loading="lazy" onerror="this.src='https://placehold.co/400x280/1a3d1a/6dcf6d?text=Foto'">
+      <div class="mural-overlay"></div>
+      <div class="mural-info">
+        <div class="mural-tag">${f.tag||'Mural · Kokama'}</div>
+        <div class="mural-title">${f.titulo}</div>
+        ${f.legenda?`<div class="mural-desc">${f.legenda}</div>`:''}
+        <div class="mural-meta">${f.data||''}</div>
+      </div>
+    </div>`).join('');
+  renderGaleriaSobre(fotos);
+}
+
+function abrirLightbox(i){
+  const f=ls('mural-fotos')[i];
+  if(!f)return;
+  document.getElementById('lb-img').src=f.url;
+  document.getElementById('lb-titulo').textContent=f.titulo;
+  document.getElementById('lb-desc').textContent=f.legenda||'';
+  document.getElementById('lightbox').classList.add('ativo');
+  document.body.style.overflow='hidden';
+}
+function fecharLightbox(){
+  document.getElementById('lightbox').classList.remove('ativo');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharLightbox();});
+
+function renderGaleriaSobre(fotos){
+  const g=document.getElementById('galeria-sobre');
+  if(!g)return;
+  if(!fotos.length){g.innerHTML='<div style="color:var(--txt3);font-size:.88rem;font-style:italic;padding:32px 0;grid-column:1/-1;text-align:center;">As fotos do mural aparecerão aqui automaticamente.</div>';return;}
+  g.innerHTML=fotos.map((f,i)=>`<img src="${f.url}" alt="${f.titulo}" loading="lazy" onclick="abrirLightbox(${i})" onerror="this.src='https://placehold.co/220x180/1a3d1a/6dcf6d?text=Foto'">`).join('');
+}
+
+// ── UPLOAD MURAL ──
+function previewMural(input){
+  const file=input.files[0];
+  const prev=document.getElementById('mural-upload-preview');
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{prev.src=e.target.result;prev.style.display='block';};
+  reader.readAsDataURL(file);
+}
+
+// drag & drop mural
+const muz=document.getElementById('mural-upload-zone');
+if(muz){
+  muz.addEventListener('dragover',e=>{e.preventDefault();muz.classList.add('drag');});
+  muz.addEventListener('dragleave',()=>muz.classList.remove('drag'));
+  muz.addEventListener('drop',e=>{
+    e.preventDefault();muz.classList.remove('drag');
+    const f=e.dataTransfer.files[0];
+    if(f){const inp=document.getElementById('m-arquivo');const dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;previewMural(inp);}
+  });
+}
+
+async function publicarMural(){
+  if(!adminOk)return;
+  const titulo=document.getElementById('m-titulo').value.trim();
+  const legenda=document.getElementById('m-legenda').value.trim();
+  const tag=document.getElementById('m-tag').value.trim();
+  const arquivo=document.getElementById('m-arquivo').files[0];
+  const msg=document.getElementById('msg-mural');
+  const btn=document.getElementById('btn-mural-pub');
+
+  if(!titulo){msg.textContent='Informe o título da publicação.';msg.className='status-msg err';return;}
+  if(!arquivo){msg.textContent='Selecione uma foto.';msg.className='status-msg err';return;}
+  if(arquivo.size>8*1024*1024){msg.textContent='Arquivo muito grande (máx. 8MB).';msg.className='status-msg err';return;}
+
+  btn.disabled=true;msg.textContent='';
+  const pw=document.getElementById('mural-progress-wrap');
+  const pf=document.getElementById('mural-progress-fill');
+  const pt=document.getElementById('mural-progress-txt');
+  pw.style.display='block';
+
+  try{
+    pt.textContent='Enviando foto…';
+    const cloudRes=await uploadCloudinary(arquivo,(pct)=>{
+      pf.style.width=pct+'%';
+      pt.textContent=`Enviando… ${pct}%`;
+    });
+    pf.style.width='100%';
+    const arr=ls('mural-fotos');
+    arr.unshift({
+      url:cloudRes.secure_url,
+      titulo,legenda,
+      tag:tag||'Mural · Kokama',
+      data:new Date().toLocaleDateString('pt-BR'),
+      id:Date.now()
+    });
+    lss('mural-fotos',arr);
+    msg.textContent='✅ Publicado com sucesso!';msg.className='status-msg ok';
+    document.getElementById('m-titulo').value='';
+    document.getElementById('m-legenda').value='';
+    document.getElementById('m-tag').value='';
+    document.getElementById('m-arquivo').value='';
+    document.getElementById('mural-upload-preview').style.display='none';
+    setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},1800);
+    renderMural();renderListaMuralAdmin();
+  }catch(e){
+    msg.textContent='❌ '+e.message;msg.className='status-msg err';
+    pw.style.display='none';
+  }finally{btn.disabled=false;}
+}
+
+function renderListaMuralAdmin(){
+  const arr=ls('mural-fotos');const el=document.getElementById('lista-mural-admin');
+  el.innerHTML=arr.length
+    ?arr.map((f,i)=>`<div class="admin-list-item">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <img src="${f.url}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;flex-shrink:0;">
+          <span>${f.titulo}</span>
+        </span>
+        <button onclick="delFoto(${i})">✕</button>
+      </div>`).join('')
+    :'<div style="color:var(--txt3);font-size:.8rem;">Nenhuma foto publicada.</div>';
+}
+function delFoto(i){
+  if(!confirm('Remover esta publicação do mural?'))return;
+  const a=ls('mural-fotos');a.splice(i,1);lss('mural-fotos',a);
+  renderMural();renderListaMuralAdmin();
 }
 
 // ═══════════════════════════════════════════════
@@ -1102,24 +1494,6 @@ function renderListaExtras(){
   el.innerHTML=arr.length?arr.map((e,i)=>`<div class="admin-list-item"><span>${e.data} · ${e.materia}</span><button onclick="delExtra(${i})">✕</button></div>`).join(''):'<div style="color:var(--txt3);font-size:.8rem;">Nenhuma aula extra.</div>';
 }
 function delExtra(i){const a=ls('extras');a.splice(i,1);lss('extras',a);renderListaExtras();renderSemana();}
-
-// ADMIN: MURAL
-function salvarMural(){
-  const url=document.getElementById('m-url').value;
-  const titulo=document.getElementById('m-titulo').value;
-  const m=document.getElementById('msg-mural');
-  if(!url||!titulo){m.textContent='URL e título obrigatórios.';m.className='status-msg err';return;}
-  const arr=ls('mural-fotos');
-  arr.unshift({url,titulo,legenda:document.getElementById('m-legenda').value,id:Date.now()});
-  lss('mural-fotos',arr);m.textContent='Publicado!';m.className='status-msg ok';
-  ['m-url','m-titulo','m-legenda'].forEach(id=>document.getElementById(id).value='');
-  renderMural();renderListaMuralAdmin();
-}
-function renderListaMuralAdmin(){
-  const arr=ls('mural-fotos');const el=document.getElementById('lista-mural-admin');
-  el.innerHTML=arr.length?arr.map((f,i)=>`<div class="admin-list-item"><span>${f.titulo}</span><button onclick="delFoto(${i})">✕</button></div>`).join(''):'<div style="color:var(--txt3);font-size:.8rem;">Nenhuma foto.</div>';
-}
-function delFoto(i){const a=ls('mural-fotos');a.splice(i,1);lss('mural-fotos',a);renderMural();renderListaMuralAdmin();}
 
 // ADMIN: AVISO
 function salvarInfo(){
