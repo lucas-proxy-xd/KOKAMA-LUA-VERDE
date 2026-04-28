@@ -709,6 +709,10 @@ footer strong{color:var(--folha);}
           <input type="text" id="cert-cpf" placeholder="000.000.000-00" oninput="mascaraCPF(this)">
         </div>
       </div>
+      <div class="form-group">
+        <label>Curso</label>
+        <input type="text" id="cert-curso" placeholder="Ex: Informática e Comunicações, Costura, Culinária…">
+      </div>
       <div class="form-row-2">
         <div class="form-group">
           <label>Ano de conclusão</label>
@@ -1605,21 +1609,19 @@ async function uploadCloudinary(file, onProgress){
 
 async function emitirCertificado(){
   if(!adminOk)return;
-  const nome=document.getElementById('cert-nome').value.trim();
-  const cpf=document.getElementById('cert-cpf').value.trim();
-  const ano=document.getElementById('cert-ano').value;
-  const arquivo=document.getElementById('cert-arquivo').files[0];
-  const msg=document.getElementById('msg-cert');
-  const btn=document.getElementById('btn-emit');
+  const nome   = document.getElementById('cert-nome').value.trim();
+  const cpf    = document.getElementById('cert-cpf').value.trim();
+  const curso  = document.getElementById('cert-curso').value.trim();
+  const ano    = document.getElementById('cert-ano').value;
+  const arquivo= document.getElementById('cert-arquivo').files[0];
+  const msg    = document.getElementById('msg-cert');
+  const btn    = document.getElementById('btn-emit');
 
-  if(!nome){msg.textContent='Informe o nome do aluno.';msg.className='status-msg err';return;}
-  if(!cpf){msg.textContent='Informe o CPF.';msg.className='status-msg err';return;}
+  if(!nome)  {msg.textContent='Informe o nome do aluno.';msg.className='status-msg err';return;}
+  if(!cpf)   {msg.textContent='Informe o CPF.';msg.className='status-msg err';return;}
+  if(!curso) {msg.textContent='Informe o curso.';msg.className='status-msg err';return;}
   if(!arquivo){msg.textContent='Selecione o arquivo do certificado.';msg.className='status-msg err';return;}
   if(arquivo.size>10*1024*1024){msg.textContent='Arquivo muito grande (máx. 10MB).';msg.className='status-msg err';return;}
-
-  // Gera código hex localmente
-  const codigo = gerarCodigoHex(ano);
-  document.getElementById('cert-codigo-preview').value = codigo;
 
   btn.disabled=true;
   const pw=document.getElementById('progress-wrap');
@@ -1629,23 +1631,38 @@ async function emitirCertificado(){
   msg.textContent='';msg.className='status-msg';
 
   try{
-    // 1. Upload Cloudinary
+    // 1. Verifica duplicata CPF+Curso ANTES de fazer upload
+    pt.textContent='Verificando cadastro…';
+    pf.style.width='10%';
+    const chkRes = await fetch(`${APPS_SCRIPT_URL}?action=verificarDuplicata&cpf=${encodeURIComponent(cpf)}&curso=${encodeURIComponent(curso)}`);
+    const chk    = await chkRes.json();
+    if(!chk.ok){
+      throw new Error(chk.erro || 'Erro na verificação.');
+    }
+    if(chk.duplicata){
+      throw new Error(`Este CPF já possui certificado de "${curso}". Código existente: ${chk.codigoExistente}`);
+    }
+
+    // 2. Gera código hex
+    const codigo = gerarCodigoHex(ano);
+    document.getElementById('cert-codigo-preview').value = codigo;
+
+    // 3. Upload Cloudinary
     pt.textContent='Enviando para o Cloudinary…';
+    pf.style.width='20%';
     const cloudRes=await uploadCloudinary(arquivo,(pct)=>{
-      pf.style.width=pct+'%';
+      pf.style.width=(20+pct*0.7)+'%';
       pt.textContent=`Enviando… ${pct}%`;
     });
     const linkUrl=cloudRes.secure_url;
 
-    // 2. Registrar no Apps Script → Planilha
+    // 4. Registrar na planilha
     pt.textContent='Registrando na planilha…';
-    pf.style.width='90%';
+    pf.style.width='92%';
     const body={
       action:'emitirCertificado',
       senha:'KOKAMA2026',
-      nome,
-      cpf,
-      codigo,
+      nome, cpf, curso, codigo,
       link:linkUrl
     };
     const r=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});
@@ -1662,10 +1679,11 @@ async function emitirCertificado(){
       msg.className='status-msg ok';
       document.getElementById('cert-nome').value='';
       document.getElementById('cert-cpf').value='';
+      document.getElementById('cert-curso').value='';
       document.getElementById('cert-arquivo').value='';
       document.getElementById('upload-preview').style.display='none';
       setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},2000);
-      atualizarPreviewCodigo(); // gera novo código hex para próxima emissão
+      atualizarPreviewCodigo();
       renderListaCertsAdmin();
     } else {
       throw new Error(d.erro||'Erro ao registrar.');
@@ -1674,6 +1692,7 @@ async function emitirCertificado(){
     msg.textContent='❌ '+e.message;
     msg.className='status-msg err';
     pw.style.display='none';
+    pf.style.width='0%';
   }finally{
     btn.disabled=false;
   }
@@ -1741,7 +1760,7 @@ async function buscarCertificado(params){
         <div class="resultado-card">
           <div class="res-badge">✅ Certificado encontrado</div>
           <div class="res-nome">${c.nome}</div>
-          <div class="res-codigo">${c.codigo} · Conclusão: ${c.data}</div>
+          <div class="res-codigo">${c.codigo}${c.curso?' · '+c.curso:''} · Conclusão: ${c.data}</div>
           ${isImagem?`<img class="res-img" src="${c.link}" alt="Certificado">`:
             `<div style="background:rgba(0,0,0,.3);border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;color:var(--txt2);font-size:.88rem;">📄 Certificado em PDF</div>`}
           <a class="btn-download" href="${c.link}" download target="_blank" rel="noopener">
