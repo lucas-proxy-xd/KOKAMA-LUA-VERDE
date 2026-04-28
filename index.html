@@ -715,8 +715,8 @@ footer strong{color:var(--folha);}
           <input type="number" id="cert-ano" value="2026" min="2020" max="2099">
         </div>
         <div class="form-group">
-          <label>Próximo código</label>
-          <input type="text" id="cert-codigo-preview" readonly placeholder="Carregando…" style="background:rgba(245,197,24,.06);border-color:rgba(245,197,24,.2);color:var(--ouro);font-weight:700;">
+          <label>Código gerado</label>
+          <input type="text" id="cert-codigo-preview" readonly placeholder="Gerado ao emitir" style="background:rgba(245,197,24,.06);border-color:rgba(245,197,24,.2);color:var(--ouro);font-weight:700;letter-spacing:.06em;">
         </div>
       </div>
 
@@ -1542,29 +1542,23 @@ async function salvarContato(){
 }
 
 // ═══════════════════════════════════════════════
-// CERTIFICADOS — GERAÇÃO DE CÓDIGO
+// CERTIFICADOS — GERAÇÃO DE CÓDIGO HEX
 // ═══════════════════════════════════════════════
-async function carregarProximoCodigo(){
-  const ano=document.getElementById('cert-ano').value||new Date().getFullYear();
-  const preview=document.getElementById('cert-codigo-preview');
-  preview.value='Carregando…';
-  try{
-    const r=await fetch(`${APPS_SCRIPT_URL}?action=proximoCodigo&ano=${ano}`);
-    const d=await r.json();
-    if(d.ok){
-      const seq=String(d.proximo).padStart(4,'0');
-      preview.value=`OMIK-${ano}-${seq}`;
-    } else {
-      preview.value='OMIK-'+ano+'-0001';
-    }
-  }catch{
-    preview.value='OMIK-'+ano+'-0001';
-  }
+function gerarCodigoHex(ano){
+  const hex = Array.from({length:6}, ()=>Math.floor(Math.random()*16).toString(16).toUpperCase()).join('');
+  return `OMIK-${ano}-${hex}`;
+}
+function atualizarPreviewCodigo(){
+  const ano = document.getElementById('cert-ano').value || new Date().getFullYear();
+  document.getElementById('cert-codigo-preview').value = gerarCodigoHex(ano);
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
   const anoInput=document.getElementById('cert-ano');
-  if(anoInput)anoInput.addEventListener('change',()=>{if(adminOk)carregarProximoCodigo();});
+  if(anoInput){
+    anoInput.addEventListener('change', atualizarPreviewCodigo);
+    atualizarPreviewCodigo();
+  }
 });
 
 // ═══════════════════════════════════════════════
@@ -1621,8 +1615,11 @@ async function emitirCertificado(){
   if(!nome){msg.textContent='Informe o nome do aluno.';msg.className='status-msg err';return;}
   if(!cpf){msg.textContent='Informe o CPF.';msg.className='status-msg err';return;}
   if(!arquivo){msg.textContent='Selecione o arquivo do certificado.';msg.className='status-msg err';return;}
-
   if(arquivo.size>10*1024*1024){msg.textContent='Arquivo muito grande (máx. 10MB).';msg.className='status-msg err';return;}
+
+  // Gera código hex localmente
+  const codigo = gerarCodigoHex(ano);
+  document.getElementById('cert-codigo-preview').value = codigo;
 
   btn.disabled=true;
   const pw=document.getElementById('progress-wrap');
@@ -1648,7 +1645,7 @@ async function emitirCertificado(){
       senha:'KOKAMA2026',
       nome,
       cpf,
-      ano,
+      codigo,
       link:linkUrl
     };
     const r=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(body)});
@@ -1661,15 +1658,14 @@ async function emitirCertificado(){
       const codeVal=document.getElementById('codigo-gerado-val');
       codeBox.style.display='block';
       codeVal.textContent=d.codigo;
-      msg.textContent=`✅ Certificado emitido com sucesso! Código: ${d.codigo}`;
+      msg.textContent=`✅ Certificado emitido! Código: ${d.codigo}`;
       msg.className='status-msg ok';
-      // Reset form
       document.getElementById('cert-nome').value='';
       document.getElementById('cert-cpf').value='';
       document.getElementById('cert-arquivo').value='';
       document.getElementById('upload-preview').style.display='none';
       setTimeout(()=>{pw.style.display='none';pf.style.width='0%';},2000);
-      carregarProximoCodigo();
+      atualizarPreviewCodigo(); // gera novo código hex para próxima emissão
       renderListaCertsAdmin();
     } else {
       throw new Error(d.erro||'Erro ao registrar.');
